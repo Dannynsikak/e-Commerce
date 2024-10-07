@@ -1,6 +1,7 @@
 // src/store.ts
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import productReducer from "./slices/productSlice";
+import cartReducer from "./slices/CartSlice";
 
 // Define the shape of your app's state
 type ModeState = {
@@ -37,7 +38,8 @@ export const { switchMode } = modeSlice.actions;
 export const store = configureStore({
   reducer: {
     products: productReducer,
-    mode: modeSlice.reducer, // Add the mode reducer here
+    mode: modeSlice.reducer, // Added the mode reducer here
+    cart: cartReducer,
   },
 });
 
