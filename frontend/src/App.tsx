@@ -1,8 +1,20 @@
-import { Container, Nav, Navbar } from "react-bootstrap";
-import { Outlet } from "react-router-dom";
+import { Badge, Container, Nav, Navbar } from "react-bootstrap";
+import { Link, Outlet } from "react-router-dom";
 import { ToggleButton } from "./components/ToogleBtn";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart, calculatePrices } from "./slices/CartSlice";
+import { AppDispatch, RootState } from "./store";
+import { CartItem } from "./types/Cart";
 
 function App() {
+  const dispatch: AppDispatch = useDispatch();
+  const cart = useSelector((state: RootState) => state.cart);
+
+  const handleAddItem = (item: CartItem) => {
+    dispatch(addItemToCart(item));
+    dispatch(calculatePrices()); // Recalculate prices after adding item
+  };
+
   return (
     <div className="d-flex flex-column vh-full ">
       <header>
@@ -11,9 +23,15 @@ function App() {
             <Navbar.Brand>tsamazona</Navbar.Brand>
           </Container>
           <Nav>
-            <a href="/cart" className="nav-link">
+            <Link href="/cart" className="nav-link">
               Cart
-            </a>
+              {cart.cartItems.length > 0 && (
+                <Badge pill bg="danger">
+                  {" "}
+                  {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}{" "}
+                </Badge>
+              )}
+            </Link>
             <a href="/signin" className="nav-link">
               Sign In
             </a>
