@@ -2,10 +2,11 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import productReducer from "./slices/productSlice";
 import cartReducer from "./slices/CartSlice";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 // Define the shape of your app's state
 type ModeState = {
-  mode: "light" | "dark"; // Use string literal types for better type safety
+  mode: "light" | "dark";
 };
 
 // Initial state for the mode
@@ -25,8 +26,8 @@ const modeSlice = createSlice({
   reducers: {
     switchMode(state) {
       const newMode = state.mode === "dark" ? "light" : "dark";
-      localStorage.setItem("mode", newMode); // Update localStorage
-      state.mode = newMode; // Update state directly
+      localStorage.setItem("mode", newMode);
+      state.mode = newMode;
     },
   },
 });
@@ -38,10 +39,14 @@ export const { switchMode } = modeSlice.actions;
 export const store = configureStore({
   reducer: {
     products: productReducer,
-    mode: modeSlice.reducer, // Added the mode reducer here
+    mode: modeSlice.reducer,
     cart: cartReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(), // Customize middleware if needed
 });
+
+// Setup listeners for RTK Query
+setupListeners(store.dispatch);
 
 // Define RootState type for usage in selectors
 export type RootState = ReturnType<typeof store.getState>;

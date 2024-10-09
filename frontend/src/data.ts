@@ -14,6 +14,7 @@ export const sampleProducts: Product[] = [
     numReviews: 10,
     createdAt: new Date(),
     updatedAt: new Date(),
+    _id: "1",
   },
   {
     name: "Adidas Fit shirt",
@@ -28,6 +29,7 @@ export const sampleProducts: Product[] = [
     numReviews: 10,
     createdAt: new Date(),
     updatedAt: new Date(),
+    _id: "2",
   },
   {
     name: "Lacoste Free Pants",
@@ -42,6 +44,7 @@ export const sampleProducts: Product[] = [
     numReviews: 17,
     createdAt: new Date(),
     updatedAt: new Date(),
+    _id: "3",
   },
   {
     name: "Nike Slim Pant",
@@ -56,5 +59,6 @@ export const sampleProducts: Product[] = [
     numReviews: 14,
     createdAt: new Date(),
     updatedAt: new Date(),
+    _id: "4",
   },
 ];

@@ -1,51 +1,54 @@
 import { Badge, Container, Nav, Navbar } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import { ToggleButton } from "./components/ToogleBtn";
-import { useDispatch, useSelector } from "react-redux";
-import { addItemToCart, calculatePrices } from "./slices/CartSlice";
-import { AppDispatch, RootState } from "./store";
-import { CartItem } from "./types/Cart";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux"; // Import useSelector
+import { RootState } from "./store"; // Import RootState
+import { LinkContainer } from "react-router-bootstrap";
 
 function App() {
-  const dispatch: AppDispatch = useDispatch();
-  const cart = useSelector((state: RootState) => state.cart);
-
-  const handleAddItem = (item: CartItem) => {
-    dispatch(addItemToCart(item));
-    dispatch(calculatePrices()); // Recalculate prices after adding item
-  };
+  const cart = useSelector((state: RootState) => state.cart); // Access the cart state
 
   return (
-    <div className="d-flex flex-column vh-full ">
+    <div className="d-flex flex-column vh-full">
+      <ToastContainer position="bottom-center" limit={1} />
       <header>
         <Navbar expand="lg">
           <Container>
-            <Navbar.Brand>tsamazona</Navbar.Brand>
+            <LinkContainer to="/">
+              <Navbar.Brand>tsamazona</Navbar.Brand>
+            </LinkContainer>
+            <Nav>
+              <Link to="/cart" className="nav-link">
+                {" "}
+                {/* Change href to to */}
+                Cart
+                {cart.cartItems.length > 0 && (
+                  <Badge pill bg="danger">
+                    {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}{" "}
+                    {/* Correctly access the quantity */}
+                  </Badge>
+                )}
+              </Link>
+              <Link to="/signin" className="nav-link">
+                {" "}
+                {/* Change href to to */}
+                Sign In
+              </Link>
+              <ToggleButton />
+            </Nav>
           </Container>
-          <Nav>
-            <Link href="/cart" className="nav-link">
-              Cart
-              {cart.cartItems.length > 0 && (
-                <Badge pill bg="danger">
-                  {" "}
-                  {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}{" "}
-                </Badge>
-              )}
-            </Link>
-            <a href="/signin" className="nav-link">
-              Sign In
-            </a>
-            <ToggleButton />
-          </Nav>
-        </Navbar>{" "}
+        </Navbar>
       </header>
       <main>
         <Container className="mt-3">
-          <Outlet />{" "}
+          <Outlet />
         </Container>
       </main>
       <footer>
-        <div className="text-center">All right reserverd</div>
+        <div className="text-center">All rights reserved</div>{" "}
+        {/* Fixed spelling */}
       </footer>
     </div>
   );

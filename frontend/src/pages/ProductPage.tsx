@@ -7,12 +7,16 @@ import {
   selectProductDetails,
 } from "../slices/productSlice";
 import { useEffect } from "react";
-import { AppDispatch } from "../store";
+import { AppDispatch, RootState } from "../store";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Row, Col, ListGroup, Card, Badge, Button } from "react-bootstrap";
 import Rating from "../components/Rating";
+import { addItemToCart, calculatePrices } from "../slices/CartSlice";
+import { CartItem } from "../types/Cart";
+import { toast } from "react-toastify"; // Import toast and ToastContainer
+import { convertProductToCartItem } from "../utils";
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -31,6 +35,30 @@ export default function ProductPage() {
     }
   }, [dispatch, slug]);
 
+  const cart = useSelector((state: RootState) => state.cart);
+  const navigate = useNavigate();
+
+  const handleAddItem = () => {
+    if (!productDetails) return; // Early return if productDetails is not available
+
+    const existItem = cart.cartItems.find((x) => x._id === productDetails._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+
+    if (productDetails.countInStock < quantity) {
+      toast.error("Sorry, the product is out of stock.", { autoClose: 3000 });
+      return;
+    }
+
+    // Dispatch the addItemToCart action
+    dispatch(
+      addItemToCart({ ...convertProductToCartItem(productDetails!), quantity })
+    );
+
+    // Optionally, calculate prices after adding the item
+    dispatch(calculatePrices());
+    toast.success("Item added to cart!"); // Toast for success
+    navigate("/cart");
+  };
   return isLoading ? (
     <LoadingBox />
   ) : error ? (
@@ -94,7 +122,9 @@ export default function ProductPage() {
                   <ListGroup.Item>
                     {" "}
                     <div className="d-grid">
-                      <Button variant="primary">Add to Cart</Button>
+                      <Button onClick={handleAddItem} variant="primary">
+                        Add to Cart
+                      </Button>
                     </div>
                   </ListGroup.Item>
                 )}

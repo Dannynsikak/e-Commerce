@@ -1,7 +1,8 @@
+// src/slices/CartSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Cart, CartItem, ShippingAddress } from "../types/Cart";
 
-// Initial state following the Cart type
+// Initial state follows the Cart type
 const initialState: Cart = {
   cartItems: localStorage.getItem("cartItems")
     ? JSON.parse(localStorage.getItem("cartItems")!)
@@ -56,7 +57,24 @@ const cartSlice = createSlice({
         (item) => item._id !== action.payload
       );
 
-      // persist the updated cartItems in localstorage
+      // persist the updated cartItems in localStorage
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+    },
+
+    // Action to update the quantity of an item in the cart
+    updateItemQuantity: (
+      state,
+      action: PayloadAction<{ itemId: string; quantity: number }>
+    ) => {
+      const { itemId, quantity } = action.payload;
+      const existItem = state.cartItems.find((item) => item._id === itemId);
+
+      if (existItem) {
+        // Update the quantity, ensuring it's at least 1
+        existItem.quantity = quantity > 0 ? quantity : 1;
+      }
+
+      // Persist the updated cartItems in localStorage
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
@@ -111,6 +129,7 @@ const cartSlice = createSlice({
 export const {
   addItemToCart,
   removeItemFromCart,
+  updateItemQuantity, // New action
   saveShippingAddress,
   savePaymentMethod,
   resetCart,

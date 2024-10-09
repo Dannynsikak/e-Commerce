@@ -7,6 +7,7 @@ import { addItemToCart, calculatePrices } from "../slices/CartSlice";
 import { AppDispatch } from "../store";
 import { CartItem } from "../types/Cart";
 import { convertProductToCartItem } from "../utils";
+import { toast } from "react-toastify";
 
 export default function ProductItem({ product }: { product: Product }) {
   const dispatch: AppDispatch = useDispatch();
@@ -15,6 +16,7 @@ export default function ProductItem({ product }: { product: Product }) {
   const handleAddItem = (item: CartItem) => {
     dispatch(addItemToCart(item));
     dispatch(calculatePrices()); // Recalculate prices after adding item
+    toast.success("Item added to cart!"); // Toast for success
   };
   return (
     <Card>
