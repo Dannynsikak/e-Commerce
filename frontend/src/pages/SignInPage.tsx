@@ -4,10 +4,9 @@ import { signIn } from "../slices/userSlice";
 import { AppDispatch, RootState } from "../store";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import LoadingBox from "../components/LoadingBox";
-import "./styles.css";
+import { Form, Button, Spinner, Alert } from "react-bootstrap";
 
-const SignInComponent = () => {
+const SignInPage = () => {
   const dispatch: AppDispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,39 +40,46 @@ const SignInComponent = () => {
   }, [navigate, redirect, userInfo]); // Dependencies for redirecting
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          id="email" // Set the ID to match the htmlFor in the label
-          name="email"
+    <Form onSubmit={handleSubmit}>
+      <Form.Group controlId="email">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control
           type="email"
+          placeholder="Enter email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          id="password"
+      </Form.Group>
+
+      <Form.Group controlId="password">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
           type="password"
+          placeholder="Enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-      </div>
-      {error && <div className="error">{error}</div>}
-      <button type="submit" disabled={loading}>
-        {loading && <LoadingBox />}
-        Sign In
-      </button>
-      <div>
+      </Form.Group>
+
+      {error && <Alert variant="danger">{error}</Alert>}
+
+      <Button
+        type="submit"
+        variant="primary"
+        disabled={loading}
+        className="mt-3"
+      >
+        {loading ? <Spinner animation="border" size="sm" /> : "Sign In"}
+      </Button>
+
+      <div className="mt-3">
         New customer?{" "}
         <Link to={`/signup?redirect=${redirect}`}>Create your account</Link>
       </div>
-    </form>
+    </Form>
   );
 };
 
-export default SignInComponent;
+export default SignInPage;
