@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import productRouter from "./routers/productRouter";
 import seedRouter from "./routers/seedRouter";
+import { userRouter } from "./routers/userRouter";
 
 dotenv.config();
 const config = process.env;
@@ -28,7 +29,7 @@ const PORT = 4000;
 app.use(morgan("dev"));
 
 // Use cookie parser for handling cookies
-app.use(cookieParser(config.TOKEN));
+app.use(cookieParser());
 
 // Define CORS options with credentials and allowed origins
 const corsOptions = {
@@ -43,7 +44,12 @@ const corsOptions = {
 };
 
 // Apply CORS middleware
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
 // Access control headers to manage allowed methods, headers, and credentials
 app.use((req, res, next) => {
@@ -65,11 +71,19 @@ app.use((req, res, next) => {
 
 // Preflight support across the board
 app.options("*", cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/products", productRouter);
+app.use("/api/users", userRouter);
 app.use("/api/seed", seedRouter);
 
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });
+
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send('Something broke!');
+// });

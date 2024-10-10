@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { ProductModel } from "../models/ProductModel";
-import { sampleProducts } from "../data"; // Sample product data
+import { sampleProducts, sampleUsers } from "../data"; // Sample product data
+import { User, UserModel } from "../models/userModel";
 
 const seedRouter = express.Router();
 
@@ -15,12 +16,23 @@ seedRouter.get(
 
       // Insert sample products
       const createdProducts = await ProductModel.insertMany(sampleProducts);
+      // delete all existing users
+      await UserModel.deleteMany({});
 
+      // Insert sample users
+      const createdUsers = await UserModel.insertMany(sampleUsers);
       // Send back the created products
-      res.send({ createdProducts });
+      res.send({ createdProducts, createdUsers });
     } catch (error) {
-      res.status(500).send({ message: "Failed to seed products", error });
+      res.status(500).send({ message: "Failed to seed data", error });
     }
+    // try {
+    //   await UserModel.deleteMany({});
+
+    //   res.send({ createdUsers });
+    // } catch (error) {
+    //   res.status(500).send({ message: "Failed to seed Users" });
+    // }
   })
 );
 

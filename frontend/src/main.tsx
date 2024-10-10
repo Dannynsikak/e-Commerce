@@ -16,6 +16,7 @@ import axios from "axios";
 import { store } from "./store.ts";
 import { Provider } from "react-redux";
 import CartPage from "./pages/CartPage.tsx";
+import SignInComponent from "./pages/SignPage.tsx";
 
 axios.defaults.baseURL =
   process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
       <Route index={true} element={<HomePage />} />
       <Route path="product/:slug" element={<ProductPage />} />
       <Route path="cart" element={<CartPage />} />
+      <Route path="signin" element={<SignInComponent />} />
       {/* <Route path="dashboard" element={<Dashboard />} /> */}
       {/* ... etc. */}
     </Route>

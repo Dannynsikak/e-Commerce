@@ -8,7 +8,7 @@ import {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class Product {
-  public _id!: string;
+  public _id?: string;
 
   @prop({ required: true })
   public name!: string;
