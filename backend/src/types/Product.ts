@@ -10,8 +10,6 @@ export interface Product {
   description: string;
   rating: number;
   numReviews: number;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 // Product Response Types

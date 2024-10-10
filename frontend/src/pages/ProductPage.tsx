@@ -14,8 +14,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Row, Col, ListGroup, Card, Badge, Button } from "react-bootstrap";
 import Rating from "../components/Rating";
 import { addItemToCart, calculatePrices } from "../slices/CartSlice";
-import { CartItem } from "../types/Cart";
-import { toast } from "react-toastify"; // Import toast and ToastContainer
+// import { CartItem } from "../types/Cart";
+import { toast } from "react-toastify";
 import { convertProductToCartItem } from "../utils";
 
 export default function ProductPage() {

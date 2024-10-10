@@ -52,7 +52,7 @@ h1 {
 
 .cart-item div {
   flex: 1;
-  margin-left: 10px; /* Space between image and text */
+  margin-left: 10px;
 }
 
 input[type="number"] {

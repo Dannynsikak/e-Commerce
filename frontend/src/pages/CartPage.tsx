@@ -76,7 +76,7 @@ export default function CartPage() {
                     min="1"
                     className="mx-2"
                     style={{ width: "60px" }} // Optional inline style to adjust width
-                    readOnly // Making the input read-only
+                    readOnly
                   />
                   <Button
                     className={buttonStyle}

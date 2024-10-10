@@ -1,17 +1,26 @@
-import { Badge, Container, Nav, Navbar } from "react-bootstrap";
+import { Badge, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import { ToggleButton } from "./components/ToogleBtn";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux"; // Import useSelector
+import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch
 import { RootState } from "./store"; // Import RootState
 import { LinkContainer } from "react-router-bootstrap";
+import { signOut } from "./slices/userSlice";
 
 function App() {
-  const cart = useSelector((state: RootState) => state.cart); // Access the cart state
+  const dispatch = useDispatch();
+  const cart = useSelector((state: RootState) => state.cart);
+  const userInfo = useSelector((state: RootState) => state.user.userInfo);
+
+  // Define a handler for signing out
+  const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); // Prevented default anchor behavior
+    dispatch(signOut()); // Dispatch the signOut action
+  };
 
   return (
-    <div className="d-flex flex-column vh-full">
+    <div className="d-flex flex-column vh-100">
       <ToastContainer position="bottom-center" limit={1} />
       <header>
         <Navbar expand="lg">
@@ -21,21 +30,28 @@ function App() {
             </LinkContainer>
             <Nav>
               <Link to="/cart" className="nav-link">
-                {" "}
-                {/* Change href to to */}
                 Cart
                 {cart.cartItems.length > 0 && (
                   <Badge pill bg="danger">
                     {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}{" "}
-                    {/* Correctly access the quantity */}
                   </Badge>
                 )}
               </Link>
-              <Link to="/signin" className="nav-link">
-                {" "}
-                {/* Change href to to */}
-                Sign In
-              </Link>
+              {userInfo ? (
+                <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                  <Link
+                    to="#signout"
+                    className="dropdown-item"
+                    onClick={handleSignOut} // Use the handler here
+                  >
+                    Sign Out
+                  </Link>
+                </NavDropdown>
+              ) : (
+                <Link className="nav-link" to="/signin">
+                  Sign In
+                </Link>
+              )}
               <ToggleButton />
             </Nav>
           </Container>
@@ -47,8 +63,7 @@ function App() {
         </Container>
       </main>
       <footer>
-        <div className="text-center">All rights reserved</div>{" "}
-        {/* Fixed spelling */}
+        <div className="text-center">All rights reserved</div>
       </footer>
     </div>
   );
