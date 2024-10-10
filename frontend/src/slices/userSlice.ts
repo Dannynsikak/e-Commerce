@@ -35,7 +35,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     signOut(state) {
-      state.userInfo = null; // Clear user info on sign out
+      state.userInfo = null;
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("shippingAddress");
+      localStorage.removeItem("paymentMethod");
+      localStorage.removeItem("cartItems");
+      window.location.href = "/signin";
     },
   },
   extraReducers: (builder) => {
