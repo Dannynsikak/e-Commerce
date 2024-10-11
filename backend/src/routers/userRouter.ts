@@ -39,7 +39,7 @@ userRouter.post(
     } as User);
 
     res.json({
-      _id: user.id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,

@@ -6,7 +6,6 @@ import { RootState } from "../store";
 import { APiError } from "../types/ApiError";
 import { getError } from "../utils";
 
-// Fetch products using createAsyncThunk
 export const fetchProducts = createAsyncThunk<
   Product[],
   void,
@@ -20,7 +19,6 @@ export const fetchProducts = createAsyncThunk<
   }
 });
 
-// Fetch product details by slug using createAsyncThunk
 export const fetchProductDetailsBySlug = createAsyncThunk<
   Product,
   string,
@@ -37,7 +35,6 @@ export const fetchProductDetailsBySlug = createAsyncThunk<
   }
 });
 
-// Initial state
 const initialState: ProductState = {
   products: [],
   productDetails: null,

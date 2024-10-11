@@ -3,7 +3,8 @@ import { configureStore, createSlice } from "@reduxjs/toolkit";
 import productReducer from "./slices/productSlice";
 import cartReducer from "./slices/CartSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import userReducer from "./slices/userSlice"; // Import the user slice
+import userReducer from "./slices/userSlice";
+import shippingReducer from "./slices/shippingSlice";
 
 // Define the shape of your app's state
 type ModeState = {
@@ -43,6 +44,7 @@ export const store = configureStore({
     mode: modeSlice.reducer,
     cart: cartReducer,
     user: userReducer,
+    shipping: shippingReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(), // Customize middleware if needed
 });
