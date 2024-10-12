@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import productRouter from "./routers/productRouter";
 import seedRouter from "./routers/seedRouter";
 import { userRouter } from "./routers/userRouter";
+import orderRoute from "./routers/orderRoute";
 
 dotenv.config();
 const config = process.env;
@@ -18,8 +19,8 @@ mongoose
   .then(() => {
     console.log("connected to mongodb");
   })
-  .catch(() => {
-    console.log("error mongodb");
+  .catch((error) => {
+    console.log("Error connecting to MongoDB:", error);
   });
 
 const app = express();
@@ -76,6 +77,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/products", productRouter);
 app.use("/api/users", userRouter);
+app.use("/api/orders", orderRoute);
 app.use("/api/seed", seedRouter);
 
 // Start the server

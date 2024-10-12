@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Col, ListGroup, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import MessageBox from "../components/MessageBox";
+import { Helmet } from "react-helmet-async";
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -42,7 +43,9 @@ export default function CartPage() {
 
   return (
     <div className="cart-page">
-      <h1>Shopping Cart</h1>
+      <Helmet>
+        <title>Cart Page</title>
+      </Helmet>
       {cartItems.length === 0 ? (
         <MessageBox>
           Your cart is empty. <Link to="/">Go Shopping</Link>

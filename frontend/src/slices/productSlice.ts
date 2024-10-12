@@ -1,10 +1,10 @@
 // src/slices/productSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { Product, ProductState } from "../types/Product";
 import { RootState } from "../store";
 import { APiError } from "../types/ApiError";
 import { getError } from "../utils";
+import apiClient from "../apiClient";
 
 export const fetchProducts = createAsyncThunk<
   Product[],
@@ -12,7 +12,7 @@ export const fetchProducts = createAsyncThunk<
   { rejectValue: string }
 >("products/fetch", async (_, { rejectWithValue }) => {
   try {
-    const { data } = await axios.get("/api/products");
+    const { data } = await apiClient.get("/api/products");
     return data;
   } catch (err) {
     return rejectWithValue(getError(err as APiError));
@@ -26,7 +26,7 @@ export const fetchProductDetailsBySlug = createAsyncThunk<
 >("products/fetchDetails", async (slug, { rejectWithValue }) => {
   try {
     console.log("Fetching URL:", `/api/products/slug/${slug}`);
-    const { data } = await axios.get(
+    const { data } = await apiClient.get(
       `http://localhost:4000/api/products/slug/${slug}`
     );
     return data;

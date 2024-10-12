@@ -1,21 +1,12 @@
 import { Router } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { ProductModel } from "../models/ProductModel";
+import allProductsController from "../controller/product-Controller";
 
 const productRouter = Router();
 
 // GET all products
-productRouter.get(
-  "/",
-  expressAsyncHandler(async (req, res) => {
-    try {
-      const products = await ProductModel.find();
-      res.json(products);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch products" });
-    }
-  })
-);
+productRouter.get("/", allProductsController.allProducts);
 
 // /api/slug/tshirt  by id
 productRouter.get(

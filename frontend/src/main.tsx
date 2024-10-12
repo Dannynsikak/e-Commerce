@@ -7,21 +7,23 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-// import "bootstrap/dist/css/bootstrap.min.css";
 import App from "./App.tsx";
 import "./index.css";
 import HomePage from "./pages/HomPage.tsx";
 import ProductPage from "./pages/ProductPage.tsx";
-import axios from "axios";
-import { store } from "./store.ts";
+// import axios from "axios";
+import { persistor, store } from "./store.ts";
 import { Provider } from "react-redux";
 import CartPage from "./pages/CartPage.tsx";
 import SignInPage from "./pages/SignInPage.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
 import ShippingAddressPage from "./pages/ShippingAddress.tsx";
+import PaymentMethodPage from "./pages/PaymentMethodPage.tsx";
+import { PersistGate } from "redux-persist/integration/react";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
-axios.defaults.baseURL =
-  process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
+// axios.defaults.baseURL =
+//   process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,7 +33,10 @@ const router = createBrowserRouter(
       <Route path="cart" element={<CartPage />} />
       <Route path="signin" element={<SignInPage />} />
       <Route path="signup" element={<SignUpPage />} />
-      <Route path="shipping" element={<ShippingAddressPage />} />
+      <Route path="" element={<ProtectedRoute />}>
+        <Route path="shipping" element={<ShippingAddressPage />} />
+        <Route path="payment" element={<PaymentMethodPage />} />
+      </Route>
       {/* <Route path="dashboard" element={<Dashboard />} /> */}
       {/* ... etc. */}
     </Route>
@@ -41,11 +46,11 @@ const router = createBrowserRouter(
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      {" "}
-      <HelmetProvider>
-        {" "}
-        <RouterProvider router={router} />
-      </HelmetProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <HelmetProvider>
+          <RouterProvider router={router} />
+        </HelmetProvider>
+      </PersistGate>
     </Provider>
   </StrictMode>
 );
