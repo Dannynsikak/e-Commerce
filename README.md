@@ -1,4 +1,4 @@
-eCommerce Project Documentation
+### eCommerce Project Documentation
 Table of Contents
 Project Overview
 Technologies Used
@@ -15,7 +15,7 @@ Project Overview
 This eCommerce project is designed to provide users with a seamless online shopping experience. It includes features for product browsing, shopping cart management, user authentication, and order processing. The project is built using modern web technologies to ensure scalability, performance, and maintainability.
 
 Technologies Used
-Frontend:
+## Frontend:
 
 React (with TypeScript)
 Redux Toolkit for state management
@@ -23,7 +23,7 @@ React Router for navigation
 React Bootstrap for styling
 React Toastify for notifications
 Axios for API requests
-Backend:
+## Backend:
 
 Node.js
 Express
@@ -62,7 +62,7 @@ Specific routes are protected based on user roles, ensuring security and proper 
 User Roles
 The eCommerce application supports three user roles:
 
-Admin:
+## Admin:
 
 Full access to manage products, users, and orders.
 Can view analytics and reports on sales and user activity.
@@ -75,29 +75,7 @@ Guest:
 Can browse products but needs to create an account to place orders.
 Limited functionality compared to registered users.
 
-Folder Structure
-/ecommerce-project
-│
-├── /client # Frontend application
-│ ├── /public
-│ ├── /src
-│ │ ├── /components # Reusable components
-│ │ ├── /pages # Application pages
-│ │ ├── /store # Redux store and slices
-│ │ ├── /utils # Utility functions
-│ │ └── index.tsx # Entry point for the React application
-│ └── .env # Environment variables for frontend
-│
-├── /server # Backend application
-│ ├── /controllers # Route controllers
-│ ├── /models # Database models
-│ ├── /routes # API routes
-│ ├── /config # Configuration files
-│ └── index.js # Entry point for the Node application
-│
-└── README.md # Project documentation
-
-API Endpoints
+## API Endpoints
 User Authentication:
 
 POST /api/users/register - Register a new user
@@ -114,7 +92,7 @@ Cart:
 GET /api/cart - Get current user's cart
 POST /api/cart - Add item to cart
 DELETE /api/cart/:id - Remove item from cart
-Orders:
+## Orders:
 
 POST /api/orders - Create a new order
 GET /api/orders/:id - Get order details
@@ -125,18 +103,15 @@ Users can browse products, view details, and add items to their cart.
 Customers can log in or register to access their account and order history.
 Admin users can manage products and view analytics.
 
-Testing
+## Testing
 To run tests, you can use a testing library like Jest or Mocha. Here’s a basic command to run tests:
-
-bash
-Copy code
-npm test
+ npm test
 Make sure to include unit tests for your components, reducers, and API calls.
 
 Contributing
 Contributions are welcome! To contribute to this project:
 
-Fork the repository.
+## Fork the repository.
 Create a new branch (git checkout -b feature/YourFeature).
 Make your changes and commit them (git commit -m 'Add some feature').
 Push to the branch (git push origin feature/YourFeature).
