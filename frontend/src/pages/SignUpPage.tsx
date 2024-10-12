@@ -9,20 +9,25 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { signUp } from "../slices/signUpSlice"; // Import your signUp action
-import { AppDispatch, RootState } from "../store"; // Import your RootState type
-import { toast } from "react-toastify"; // Import toast for notifications
-
+import { signUp } from "../slices/userSlice"; // Import signUp from userSlice
+import { AppDispatch, RootState } from "../store";
+import { toast } from "react-toastify";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 const SignUpPage: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const dispatch = useDispatch<AppDispatch>(); // Use AppDispatch for correct typing
-  const { loading, error, userInfo } = useSelector(
-    (state: RootState) => state.user
-  ); // Access user state
+  const loading = useSelector((state: RootState) => state.user.loading);
+  const userError = useSelector((state: RootState) => state.user.error);
+  const userInfo = useSelector((state: RootState) => state.user.userInfo);
+  const { search } = useLocation();
+  const redirectInUrl = new URLSearchParams(search).get("redirect");
+  const redirect = redirectInUrl ? redirectInUrl : "/";
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,27 +42,32 @@ const SignUpPage: React.FC = () => {
     dispatch(signUp({ name, email, password }));
   };
 
-  // Handle errors using toast notifications
   useEffect(() => {
-    if (error) {
-      toast.error(error);
+    if (userError) {
+      toast.error(userError.message || "An error occurred"); // Use the APIError type for error message
     }
-  }, [error]);
+  }, [userError]);
 
-  // Redirect logic after successful sign-up (if applicable)
   useEffect(() => {
     if (userInfo) {
-      // You can redirect or perform any action upon successful sign-up
-      toast.success("Sign up successful!"); // Notify user of success
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      toast.success("Sign up successful!");
+      navigate(redirect || "/");
     }
-  }, [userInfo]);
+  }, [navigate, redirect, userInfo]);
 
   return (
     <Container className="mt-5">
+      <Helmet>
+        <title>Sign Up</title>
+      </Helmet>
       <Row className="justify-content-md-center">
         <Col md={6}>
-          <h2>Create an Account</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
+          <h2 className="text-center">Create an Account</h2>
+          {userError && (
+            <Alert variant="danger">{userError.message}</Alert>
+          )}{" "}
+          {/* Use the APIError message */}
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
@@ -111,6 +121,11 @@ const SignUpPage: React.FC = () => {
             >
               {loading ? <Spinner animation="border" size="sm" /> : "Sign Up"}
             </Button>
+
+            <div className="mt-3">
+              Already have an account?{" "}
+              <Link to={`/signin?redirect=${redirect}`}>Sign In</Link>
+            </div>
           </Form>
         </Col>
       </Row>
