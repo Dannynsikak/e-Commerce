@@ -23,6 +23,7 @@ const initialState: Cart = {
   shippingPrice: 0,
   taxPrice: 0,
   totalPrice: 0,
+  status: "loading",
 };
 
 // Create the cart slice
