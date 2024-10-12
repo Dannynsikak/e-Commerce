@@ -8,6 +8,15 @@ import shippingReducer from "./slices/shippingSlice";
 import paymentReducer from "./slices/paymentSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import orderReducer from "./slices/orderSlice";
+import {
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 
 // Define the shape of your app's state
 type ModeState = {
@@ -51,7 +60,8 @@ const rootReducer = combineReducers({
   user: userReducer,
   shipping: shippingReducer,
   payment: paymentReducer,
-  mode: modeSlice.reducer, // Include the mode slice here
+  mode: modeSlice.reducer,
+  order: orderReducer,
 });
 
 // Create a persisted reducer
@@ -59,8 +69,13 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Configure the Redux store
 export const store = configureStore({
-  reducer: persistedReducer, // Use the persistedReducer directly
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER], // Ignore redux-persist actions
+      },
+    }),
 });
 
 // Create a persistor
