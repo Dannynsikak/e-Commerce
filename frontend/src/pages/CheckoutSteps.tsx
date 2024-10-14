@@ -2,20 +2,20 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { Link } from "react-router-dom";
-import { Card, Col, ListGroup, Row } from "react-bootstrap";
+import { Col, ListGroup, Row } from "react-bootstrap";
 
 const CheckoutSteps: React.FC = () => {
   const shippingAddress = useSelector(
     (state: RootState) => state.shipping.shippingAddress
   );
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
-  const cartItems = useSelector((state: RootState) => state.cart.cartItems);
-  const itemsPrice = useSelector((state: RootState) => state.cart.itemsPrice);
-  const shippingPrice = useSelector(
-    (state: RootState) => state.cart.shippingPrice
-  );
-  const taxPrice = useSelector((state: RootState) => state.cart.taxPrice);
-  const totalPrice = useSelector((state: RootState) => state.cart.totalPrice);
+  // const cartItems = useSelector((state: RootState) => state.cart.cartItems);
+  // const itemsPrice = useSelector((state: RootState) => state.cart.itemsPrice);
+  // const shippingPrice = useSelector(
+  //   (state: RootState) => state.cart.shippingPrice
+  // );
+  // const taxPrice = useSelector((state: RootState) => state.cart.taxPrice);
+  // const totalPrice = useSelector((state: RootState) => state.cart.totalPrice);
 
   // Define boolean states for each step
   const isSignedIn = !!userInfo;
@@ -58,7 +58,7 @@ const CheckoutSteps: React.FC = () => {
           </ListGroup>
 
           {/* Display shipping address if available */}
-          {isShippingCompleted && (
+          {/* {isShippingCompleted && (
             <div className="mt-4">
               <h4>Shipping Address:</h4>
               <Card className="mt-2">
@@ -73,10 +73,10 @@ const CheckoutSteps: React.FC = () => {
                 </Card.Body>
               </Card>
             </div>
-          )}
+          )} */}
 
           {/* Render Cart Items */}
-          {cartItems.length > 0 && (
+          {/* {cartItems.length > 0 && (
             <div className="mt-4">
               <h4>Items in Cart:</h4>
               <ListGroup variant="flush">
@@ -92,10 +92,10 @@ const CheckoutSteps: React.FC = () => {
                 ))}
               </ListGroup>
             </div>
-          )}
+          )} */}
 
           {/* Render Order Summary */}
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <h4>Order Summary:</h4>
             <Card className="mt-2">
               <Card.Body>
@@ -111,7 +111,7 @@ const CheckoutSteps: React.FC = () => {
                 </Card.Text>
               </Card.Body>
             </Card>
-          </div>
+          </div> */}
         </Col>
       </Row>
     </div>

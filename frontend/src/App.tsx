@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux"; // Import useSelector an
 import { RootState } from "./store"; // Import RootState
 import { LinkContainer } from "react-router-bootstrap";
 import { signOut } from "./slices/userSlice";
+import { resetCart } from "./slices/CartSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ function App() {
   const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault(); // Prevented default anchor behavior
     dispatch(signOut()); // Dispatch the signOut action
+    dispatch(resetCart()); // Clear the cart on sign out
   };
 
   return (

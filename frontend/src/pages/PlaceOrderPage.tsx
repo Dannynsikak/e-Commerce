@@ -1,231 +1,119 @@
+// src/components/PlaceOrder.tsx
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { RootState } from "../store"; // Import your store's RootState
-import { createOrder, resetOrder } from "../slices/orderSlice";
-import { AppDispatch } from "../store"; // Your dispatch type
-import { resetCart } from "../slices/CartSlice"; // Action to clear cart
-import { toast } from "react-toastify";
-import { APiError } from "../types/ApiError"; // Import your error type
-import CheckoutSteps from "./CheckoutSteps";
-import { Helmet } from "react-helmet-async";
-import { Card, Button, ListGroup, Row, Col } from "react-bootstrap";
+import { RootState, AppDispatch } from "../store";
+import { useNavigate } from "react-router-dom";
+import { setShippingAddress } from "../slices/shippingSlice"; // Assuming you have the action set
+import { createOrder } from "../slices/orderSlice"; // Assuming you have an order creation action
+import { resetCart } from "../slices/CartSlice"; // Assuming you want to clear cart after placing order
 
-// Helper function to round numbers to two decimal places
-const round2 = (num: number) => Math.round(num * 100 + Number.EPSILON) / 100;
-
-// Type guard to check if error is of type APiError
-const isApiError = (error: unknown): error is APiError => {
-  if (typeof error === "object" && error !== null) {
-    const e = error as APiError; // Cast to APiError for property checking
-    return (
-      typeof e.message === "string" &&
-      typeof e.response === "object" &&
-      e.response !== null &&
-      typeof e.response.data === "object" &&
-      e.response.data !== null &&
-      typeof e.response.data.message === "string"
-    );
-  }
-  return false;
-};
-
-const PlaceOrderPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+const PlaceOrder: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get cart information from the Redux store
-  const { cart } = useSelector((state: RootState) => ({
-    cart: state.cart,
-  }));
+  // Extract shipping address, cart items, payment method, etc., from the Redux store
+  const { shippingAddress } = useSelector((state: RootState) => state.shipping);
+  const { cartItems } = useSelector((state: RootState) => state.cart);
+  const { paymentMethod } = useSelector((state: RootState) => state.payment);
+  const { userInfo } = useSelector((state: RootState) => state.user);
 
-  // Calculate prices using helper functions to avoid floating-point issues
-  const itemsPrice = round2(
-    cart.cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0)
+  // Calculate prices
+  const itemsPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
   );
-  const shippingPrice = itemsPrice > 100 ? round2(0) : round2(10); // Free shipping for orders over $100
-  const taxPrice = round2(0.15 * itemsPrice); // 15% tax
-  const totalPrice = round2(itemsPrice + shippingPrice + taxPrice);
+  const shippingPrice = itemsPrice > 100 ? 0 : 10; // Example shipping logic
+  const taxPrice = itemsPrice * 0.15; // Example tax rate
+  const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
-  // Function to handle placing the order
+  // Handle place order functionality
   const placeOrderHandler = async () => {
-    try {
-      // Dispatch the createOrder action with the order data (example with Redux)
-      const orderData = {
-        // assuming you have this data ready from your state
-        orderItems: cart.cartItems,
-        shippingAddress: cart.shippingAddress,
-        paymentMethod: cart.paymentMethod,
-        itemsPrice: cart.itemsPrice,
-        shippingPrice: cart.shippingPrice,
-        taxPrice: cart.taxPrice,
-        totalPrice: cart.totalPrice,
-      };
-
-      await dispatch(createOrder(orderData)); // Dispatching Redux action
-    } catch (error) {
-      console.error("Error placing order:", error);
+    if (!shippingAddress || !paymentMethod) {
+      // If missing shipping address or payment method, redirect or alert the user
+      alert("Please complete the shipping and payment details.");
+      return;
     }
+
+    // Dispatch action to create the order
+    dispatch(
+      createOrder({
+        user: userInfo._id,
+        orderItems: cartItems,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        shippingPrice,
+        taxPrice,
+        totalPrice,
+      })
+    );
+
+    // Optionally, clear the cart after order is placed
+    dispatch(resetCart());
+
+    // Redirect to order confirmation page
+    navigate("/order-confirmation");
   };
 
-  // After placing the order, navigate to the order details page and clear the cart
+  // Load shipping address from localStorage if present
   useEffect(() => {
-    if (cart.status === "succeeded") {
-      // Display success toast notification
-      toast.success("Order placed successfully!");
-      if (cart.paymentMethod) {
-        navigate("/payment");
-      }
-      // Use optional chaining when accessing cart.order
-      if (cart.order?._id) {
-        navigate(`/order/${cart.order._id}`);
-      } else {
-        toast.error("Order ID not found.");
-      }
-      localStorage.removeItem("cartItems");
-      dispatch(resetCart());
-      dispatch(resetOrder());
-    } else if (cart.status === "failed" && cart.error) {
-      // Use the type guard to check if cart.error is APiError
-      if (isApiError(cart.error)) {
-        const errorMessage = cart.error.response.data.message;
-        toast.error(`Error: ${errorMessage}`);
-      } else {
-        toast.error("An unknown error occurred.");
-      }
-
-      dispatch(resetOrder());
+    if (!shippingAddress) {
+      dispatch(
+        setShippingAddress(
+          JSON.parse(localStorage.getItem("shippingAddress") || "{}")
+        )
+      );
     }
-  }, [
-    cart.status,
-    cart.order,
-    cart.paymentMethod,
-    cart.error,
-    navigate,
-    dispatch,
-  ]);
+  }, [dispatch, shippingAddress]);
 
   return (
-    <>
-      <CheckoutSteps />
-      <Helmet>
-        <title>Preview Order</title>
-      </Helmet>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Place Order</h1>
 
-      <h1 className="my-4">Preview Order</h1>
+      {/* Shipping Information */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">Shipping</h2>
+        {shippingAddress ? (
+          <div>
+            <p>
+              <strong>Name: </strong> {shippingAddress.fullName}
+            </p>
+            <p>
+              <strong>Address: </strong>{" "}
+              {`${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.postalCode}, ${shippingAddress.country}`}
+            </p>
+          </div>
+        ) : (
+          <p>No shipping address provided.</p>
+        )}
+      </div>
 
-      {/* Wrapping content inside a Bootstrap row */}
-      <Row>
-        <Col md={8}>
-          {/* Shipping Information */}
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Shipping</Card.Title>
-              <Card.Text>
-                <strong>Name:</strong> {cart.shippingAddress?.fullName} <br />
-                <strong>Address:</strong> {cart.shippingAddress?.address},{" "}
-                {cart.shippingAddress?.city}, {cart.shippingAddress?.postalCode}
-                , {cart.shippingAddress?.country}
-              </Card.Text>
-              <Link to="/shipping">Edit</Link>
-            </Card.Body>
-          </Card>
+      {/* Payment Information */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">Payment Method</h2>
+        <p>{paymentMethod || "No payment method selected."}</p>
+      </div>
 
-          {/* Payment Information */}
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Payment</Card.Title>
-              <Card.Text>
-                <strong>Method:</strong> {cart.paymentMethod}
-              </Card.Text>
-              <Link to="/payment">Edit</Link>
-            </Card.Body>
-          </Card>
+      {/* Order Summary */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">Order Summary</h2>
+        <ul>
+          <li>Items: ${itemsPrice.toFixed(2)}</li>
+          <li>Shipping: ${shippingPrice.toFixed(2)}</li>
+          <li>Tax: ${taxPrice.toFixed(2)}</li>
+          <li>Total: ${totalPrice.toFixed(2)}</li>
+        </ul>
+      </div>
 
-          {/* Cart Items */}
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Items</Card.Title>
-              <ListGroup variant="flush">
-                {cart.cartItems.map((item) => (
-                  <ListGroup.Item key={item._id}>
-                    <Row className="align-items-center">
-                      <Col md={6}>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="img-fluid rounded thumbnail me-2"
-                        />
-                        <Link to={`/product/${item.slug}`}>{item.name}</Link>
-                      </Col>
-                      <Col md={3}>
-                        <span>{item.quantity}</span>
-                      </Col>
-                      <Col md={3}>${item.price.toFixed(2)}</Col>
-                    </Row>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-              <Link to="/cart">Edit</Link>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Order Summary */}
-        <Col md={4}>
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Order Summary</Card.Title>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Items</Col>
-                    <Col>${cart.itemsPrice.toFixed(2)}</Col>
-                  </Row>
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Shipping</Col>
-                    <Col>${cart.shippingPrice.toFixed(2)}</Col>
-                  </Row>
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <Row>
-                    <Col>Tax</Col>
-                    <Col>${cart.taxPrice.toFixed(2)}</Col>
-                  </Row>
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                  <Row>
-                    <Col>
-                      <strong>Order Total</strong>
-                    </Col>
-                    <Col>${cart.totalPrice.toFixed(2)}</Col>
-                  </Row>
-                </ListGroup.Item>
-              </ListGroup>
-
-              <ListGroup.Item>
-                <div className="d-grid">
-                  <Button
-                    type="button"
-                    onClick={placeOrderHandler}
-                    disabled={cart.cartItems.length === 0}
-                    className="btn btn-primary"
-                  >
-                    Place Order
-                  </Button>
-                </div>
-              </ListGroup.Item>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </>
+      {/* Place Order Button */}
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded-md"
+        onClick={placeOrderHandler}
+      >
+        Place Order
+      </button>
+    </div>
   );
 };
 
-export default PlaceOrderPage;
+export default PlaceOrder;

@@ -30,7 +30,9 @@ export const signIn = createAsyncThunk<
   UserInfo,
   { email: string; password: string }
 >("user/signIn", async (userData) => {
+  console.log("Signing in with:", userData);
   const response = await apiClient.post("/api/users/signin", userData);
+  console.log("Received response:", response.data); // Debugging output
   return response.data; // Expecting the user object with token and role
 });
 
@@ -72,6 +74,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.userInfo = action.payload; // Set user info on successful sign-in
         localStorage.setItem("userInfo", JSON.stringify(action.payload)); // Store user info in localStorage
+        console.log("Saved to localStorage:", localStorage.getItem("userInfo"));
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;

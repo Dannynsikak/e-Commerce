@@ -20,8 +20,8 @@ export type ShippingAddress = {
 
 export type Cart = {
   cartItems: CartItem[];
-  shippingAddress?: ShippingAddress; // Made optional in case it's not set
-  paymentMethod?: string; // Made optional
+  shippingAddress: ShippingAddress; // Made optional in case it's not set
+  paymentMethod: string; // Made optional
   itemsPrice: number;
   shippingPrice: number;
   taxPrice: number;
