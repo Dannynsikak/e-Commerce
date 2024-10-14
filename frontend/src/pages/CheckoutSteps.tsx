@@ -9,6 +9,10 @@ const CheckoutSteps: React.FC = () => {
     (state: RootState) => state.shipping.shippingAddress
   );
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
+  const paymentMethod = useSelector(
+    (state: RootState) => state.payment.paymentMethod
+  );
+  const order = useSelector((state: RootState) => state.order.order);
   // const cartItems = useSelector((state: RootState) => state.cart.cartItems);
   // const itemsPrice = useSelector((state: RootState) => state.cart.itemsPrice);
   // const shippingPrice = useSelector(
@@ -20,6 +24,8 @@ const CheckoutSteps: React.FC = () => {
   // Define boolean states for each step
   const isSignedIn = !!userInfo;
   const isShippingCompleted = !!shippingAddress;
+  const isPaymentCompleted = !!paymentMethod;
+  const isOrderCompleted = !!order;
 
   return (
     <div className="container mt-4">
@@ -46,14 +52,22 @@ const CheckoutSteps: React.FC = () => {
               )}
             </ListGroup.Item>
             <ListGroup.Item>
-              <Link to="/payment" className="text-decoration-none">
-                Payment
-              </Link>
+              {isPaymentCompleted ? (
+                <span className="text-success">Payment Method Selected</span>
+              ) : (
+                <Link to="/payment" className="text-decoration-none">
+                  Payment
+                </Link>
+              )}
             </ListGroup.Item>
             <ListGroup.Item>
-              <Link to="/placeorder" className="text-decoration-none">
-                Place Order
-              </Link>
+              {isOrderCompleted ? (
+                <span className="text-success">Order Completed</span>
+              ) : (
+                <Link to="/placeorder" className="text-decoration-none">
+                  Place Order
+                </Link>
+              )}
             </ListGroup.Item>
           </ListGroup>
 
