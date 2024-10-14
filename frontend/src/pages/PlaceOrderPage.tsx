@@ -8,6 +8,8 @@ import { createOrder } from "../slices/orderSlice"; // Assuming you have an orde
 import { resetCart } from "../slices/CartSlice"; // Assuming you want to clear cart after placing order
 import { Card, ListGroup, Button } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
+import { toast } from "react-toastify";
+import CheckoutSteps from "./CheckoutSteps";
 
 const PlaceOrder: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -32,12 +34,12 @@ const PlaceOrder: React.FC = () => {
   const placeOrderHandler = async () => {
     if (!shippingAddress || !paymentMethod) {
       // If missing shipping address or payment method, redirect or alert the user
-      alert("Please complete the shipping and payment details.");
+      toast.error("Please complete the shipping and payment details.");
       return;
     }
     if (!userInfo || !userInfo._id) {
       // If user is not logged in or userInfo is undefined, alert the user
-      alert("User not logged in.");
+      toast.error("User not logged in.");
       return;
     }
 
@@ -78,6 +80,7 @@ const PlaceOrder: React.FC = () => {
       <Helmet>
         <title>Place Order</title>
       </Helmet>
+      <CheckoutSteps />
       <h1 className="text-center mb-4">Place Order</h1>
 
       {/* Shipping Information */}
