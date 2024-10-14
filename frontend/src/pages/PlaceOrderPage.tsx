@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { setShippingAddress } from "../slices/shippingSlice"; // Assuming you have the action set
 import { createOrder } from "../slices/orderSlice"; // Assuming you have an order creation action
 import { resetCart } from "../slices/CartSlice"; // Assuming you want to clear cart after placing order
+import { Card, ListGroup, Button } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
 
 const PlaceOrder: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -31,6 +33,11 @@ const PlaceOrder: React.FC = () => {
     if (!shippingAddress || !paymentMethod) {
       // If missing shipping address or payment method, redirect or alert the user
       alert("Please complete the shipping and payment details.");
+      return;
+    }
+    if (!userInfo || !userInfo._id) {
+      // If user is not logged in or userInfo is undefined, alert the user
+      alert("User not logged in.");
       return;
     }
 
@@ -68,50 +75,60 @@ const PlaceOrder: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Place Order</h1>
+      <Helmet>
+        <title>Place Order</title>
+      </Helmet>
+      <h1 className="text-center mb-4">Place Order</h1>
 
       {/* Shipping Information */}
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold">Shipping</h2>
-        {shippingAddress ? (
-          <div>
-            <p>
-              <strong>Name: </strong> {shippingAddress.fullName}
-            </p>
-            <p>
-              <strong>Address: </strong>{" "}
-              {`${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.postalCode}, ${shippingAddress.country}`}
-            </p>
-          </div>
-        ) : (
-          <p>No shipping address provided.</p>
-        )}
-      </div>
+      <Card className="mb-4">
+        <Card.Header as="h2">Shipping</Card.Header>
+        <Card.Body>
+          {shippingAddress ? (
+            <div>
+              <p>
+                <strong>Name:</strong> {shippingAddress.fullName}
+              </p>
+              <p>
+                <strong>Address:</strong>{" "}
+                {`${shippingAddress.address}, ${shippingAddress.city}, ${shippingAddress.postalCode}, ${shippingAddress.country}`}
+              </p>
+            </div>
+          ) : (
+            <p>No shipping address provided.</p>
+          )}
+        </Card.Body>
+      </Card>
 
       {/* Payment Information */}
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold">Payment Method</h2>
-        <p>{paymentMethod || "No payment method selected."}</p>
-      </div>
+      <Card className="mb-4">
+        <Card.Header as="h2">Payment Method</Card.Header>
+        <Card.Body>
+          <p>{paymentMethod || "No payment method selected."}</p>
+        </Card.Body>
+      </Card>
 
       {/* Order Summary */}
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold">Order Summary</h2>
-        <ul>
-          <li>Items: ${itemsPrice.toFixed(2)}</li>
-          <li>Shipping: ${shippingPrice.toFixed(2)}</li>
-          <li>Tax: ${taxPrice.toFixed(2)}</li>
-          <li>Total: ${totalPrice.toFixed(2)}</li>
-        </ul>
-      </div>
+      <Card className="mb-4">
+        <Card.Header as="h2">Order Summary</Card.Header>
+        <Card.Body>
+          <ListGroup variant="flush">
+            <ListGroup.Item>Items: ${itemsPrice.toFixed(2)}</ListGroup.Item>
+            <ListGroup.Item>
+              Shipping: ${shippingPrice.toFixed(2)}
+            </ListGroup.Item>
+            <ListGroup.Item>Tax: ${taxPrice.toFixed(2)}</ListGroup.Item>
+            <ListGroup.Item>Total: ${totalPrice.toFixed(2)}</ListGroup.Item>
+          </ListGroup>
+        </Card.Body>
+      </Card>
 
       {/* Place Order Button */}
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-md"
-        onClick={placeOrderHandler}
-      >
-        Place Order
-      </button>
+      <div className="text-center">
+        <Button variant="primary" onClick={placeOrderHandler}>
+          Place Order
+        </Button>
+      </div>
     </div>
   );
 };
