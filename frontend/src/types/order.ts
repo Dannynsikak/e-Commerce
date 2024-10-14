@@ -6,7 +6,7 @@ export type Order = {
   orderItems: CartItem[];
   shippingAddress?: ShippingAddress;
   paymentMethod?: string;
-  user?: User;
+  user?: User | string;
   createdAt?: string;
   isPaid?: boolean;
   paidAt?: string;

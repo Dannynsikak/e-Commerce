@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { APiError } from "../types/ApiError";
 
+export type PaymentMethod = "PayPal" | "CreditCard";
+
 interface PaymentState {
   paymentMethod: string;
   loading: boolean;
@@ -24,7 +26,7 @@ const paymentSlice = createSlice({
       localStorage.setItem("paymentMethod", action.payload);
     },
     resetPaymentMethod: (state) => {
-      state.paymentMethod = "";
+      state.paymentMethod = "PayPal";
       localStorage.removeItem("paymentMethod");
     },
     paymentRequest: (state) => {

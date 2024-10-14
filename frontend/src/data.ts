@@ -12,8 +12,6 @@ export const sampleProducts: Product[] = [
     description: "high quality shirt",
     rating: 4.5,
     numReviews: 10,
-    createdAt: new Date(),
-    updatedAt: new Date(),
     _id: "1",
   },
   {
@@ -27,8 +25,6 @@ export const sampleProducts: Product[] = [
     description: "high quality product",
     rating: 4.0,
     numReviews: 10,
-    createdAt: new Date(),
-    updatedAt: new Date(),
     _id: "2",
   },
   {
@@ -42,8 +38,6 @@ export const sampleProducts: Product[] = [
     description: "high quality product",
     rating: 4.8,
     numReviews: 17,
-    createdAt: new Date(),
-    updatedAt: new Date(),
     _id: "3",
   },
   {
@@ -57,8 +51,6 @@ export const sampleProducts: Product[] = [
     description: "high quality product",
     rating: 4.5,
     numReviews: 14,
-    createdAt: new Date(),
-    updatedAt: new Date(),
     _id: "4",
   },
 ];
