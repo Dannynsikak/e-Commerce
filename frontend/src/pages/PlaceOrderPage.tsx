@@ -55,7 +55,7 @@ const PlaceOrder: React.FC = () => {
     );
 
     dispatch(resetCart());
-    navigate("/order-confirmation");
+    navigate(`/order/${userInfo._id}`);
   };
 
   useEffect(() => {

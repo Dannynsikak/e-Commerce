@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getOrderById, resetOrder } from "../slices/orderSlice";
 import { RootState, AppDispatch } from "../store"; // Adjust based on your store setup
+import { Container, Row, Col, Card, ListGroup } from "react-bootstrap";
+import MessageBox from "../components/MessageBox";
 // import { Order } from "../types/order";
 
 const OrderPage: React.FC = () => {
@@ -39,43 +41,107 @@ const OrderPage: React.FC = () => {
   // Render order details
   if (status === "succeeded" && order) {
     return (
-      <div>
-        <h1>Order Details</h1>
-        <div>
-          <h2>Order ID: {order._id}</h2>
-          <h3>Customer Information</h3>
-          {order.shippingAddress && (
-            <div>
-              <p>Full Name: {order.shippingAddress.fullName}</p>
-              <p>
-                Address: {order.shippingAddress.address},{" "}
-                {order.shippingAddress.city}, {order.shippingAddress.country}
-              </p>
-              <p>Postal Code: {order.shippingAddress.postalCode}</p>
-            </div>
-          )}
-          <h3>Items Ordered</h3>
-          {order.orderItems.map((item) => (
-            <div key={item._id}>
-              <img src={item.image} alt={item.name} className="img-fluid" />
-              <p>Name: {item.name}</p>
-              <p>Quantity: {item.quantity}</p>
-              <p>Price: ${item.price}</p>
-            </div>
-          ))}
-          <h3>Payment Method: {order.paymentMethod}</h3>
-          <h3>Total Price: ${order.totalPrice}</h3>
-          <h3>Status:</h3>
-          <p>
-            {order.isPaid ? "Paid" : "Not Paid"}{" "}
-            {order.paidAt && `on ${order.paidAt}`}
-          </p>
-          <p>
-            {order.isDelivered ? "Delivered" : "Not Delivered"}{" "}
-            {order.deliveredAt && `on ${order.deliveredAt}`}
-          </p>
-        </div>
-      </div>
+      <Container className="my-5">
+        <h1 className="mb-4">Order Details</h1>
+        <Row>
+          {/* Order Info Section */}
+          <Col md={8}>
+            <Card className="mb-4">
+              <Card.Header as="h2">Order ID: {order._id}</Card.Header>
+              <Card.Body>
+                <h3>Customer Information</h3>
+                {order.shippingAddress && (
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <strong>Full Name:</strong>{" "}
+                      {order.shippingAddress.fullName}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Address:</strong> {order.shippingAddress.address},{" "}
+                      {order.shippingAddress.city},{" "}
+                      {order.shippingAddress.country}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Postal Code:</strong>{" "}
+                      {order.shippingAddress.postalCode}
+                    </ListGroup.Item>
+                  </ListGroup>
+                )}
+              </Card.Body>
+            </Card>
+
+            <Card className="mb-4">
+              <Card.Header as="h3">Items Ordered</Card.Header>
+              <Card.Body>
+                {order.orderItems.map((item) => (
+                  <ListGroup variant="flush" key={item._id}>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col md={2}>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="img-fluid"
+                          />
+                        </Col>
+                        <Col>
+                          <p>
+                            <strong>Name:</strong> {item.name}
+                          </p>
+                          <p>
+                            <strong>Quantity:</strong> {item.quantity}
+                          </p>
+                          <p>
+                            <strong>Price:</strong> ${item.price}
+                          </p>
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                  </ListGroup>
+                ))}
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* Payment and Order Status Section */}
+          <Col md={4}>
+            <Card>
+              <Card.Header as="h3">Payment Information</Card.Header>
+              <Card.Body>
+                <ListGroup variant="flush">
+                  <ListGroup.Item>
+                    <strong>Payment Method:</strong> {order.paymentMethod}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Total Price:</strong> ${order.totalPrice.toFixed(2)}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Status:</strong>{" "}
+                    {order.isPaid ? (
+                      <MessageBox variant="success">
+                        Paid at {order.paidAt}
+                      </MessageBox>
+                    ) : (
+                      <MessageBox variant="warning">Not Paid</MessageBox>
+                    )}{" "}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Delivery:</strong>{" "}
+                    {order.isDelivered ? (
+                      <MessageBox variant="success">
+                        Delivered at {order.deliveredAt}
+                      </MessageBox>
+                    ) : (
+                      <MessageBox variant="warning">Not Delivered</MessageBox>
+                    )}{" "}
+                    {order.deliveredAt && `on ${order.deliveredAt}`}
+                  </ListGroup.Item>
+                </ListGroup>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 
