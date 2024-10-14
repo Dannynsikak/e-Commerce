@@ -2,6 +2,16 @@ import { Request, Response } from "express";
 import { OrderModel } from "../models/orderModels";
 import { Product } from "../models/ProductModel";
 
+// get orders by id
+const orderModelsById = async (req: Request, res: Response) => {
+  const order = await OrderModel.findById(req.params.id);
+  if (order) {
+    res.json(order);
+  } else {
+    res.status(404).json({ message: "Order Not Found" });
+  }
+};
+
 // Function to handle order creation
 const orderModels = async (req: Request, res: Response): Promise<void> => {
   if (!req.body.orderItems || req.body.orderItems.length === 0) {
@@ -41,6 +51,7 @@ const orderModels = async (req: Request, res: Response): Promise<void> => {
 
 const orderModelsController = {
   orderModels,
+  orderModelsById,
 };
 
 export default orderModelsController;

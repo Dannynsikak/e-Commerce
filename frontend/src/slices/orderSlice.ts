@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import apiClient from "../apiClient"; // Assuming apiClient is set up to handle API requests
 import { Order } from "../types/order"; // Import the Order type
-
+import { APiError } from "../types/ApiError";
 // Async thunk for creating an order
 export const createOrder = createAsyncThunk(
   "order/createOrder",
@@ -14,11 +14,22 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+// Async thunk for getting an order by ID
+export const getOrderById = createAsyncThunk(
+  "order/getOrderById",
+  async (orderId: string) => {
+    const { data } = await apiClient.get<{ message: string; order: Order }>(
+      `api/orders/${orderId}`
+    );
+    return data.order;
+  }
+);
+
 // Initial state
 interface OrderState {
   order: Order | null;
   status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
+  error: APiError | null;
 }
 
 const initialState: OrderState = {
@@ -48,7 +59,21 @@ export const orderSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message || "Failed to create order";
+        state.error = (action.error as APiError) || "Failed to create order";
+      })
+      .addCase(getOrderById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getOrderById.fulfilled,
+        (state, action: PayloadAction<Order>) => {
+          state.status = "succeeded";
+          state.order = action.payload;
+        }
+      )
+      .addCase(getOrderById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = (action.error as APiError) || "Failed to fetch order";
       });
   },
 });

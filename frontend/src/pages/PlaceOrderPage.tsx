@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setShippingAddress } from "../slices/shippingSlice"; // Assuming you have the action set
 import { createOrder } from "../slices/orderSlice"; // Assuming you have an order creation action
 import { resetCart } from "../slices/CartSlice"; // Assuming you want to clear cart after placing order
-import { Card, ListGroup, Button } from "react-bootstrap";
+import { Card, ListGroup, Button, Row, Col } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
 import CheckoutSteps from "./CheckoutSteps";
@@ -15,13 +15,11 @@ const PlaceOrder: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Extract shipping address, cart items, payment method, etc., from the Redux store
   const { shippingAddress } = useSelector((state: RootState) => state.shipping);
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const { paymentMethod } = useSelector((state: RootState) => state.payment);
   const { userInfo } = useSelector((state: RootState) => state.user);
 
-  // Calculate prices
   const itemsPrice = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
@@ -30,7 +28,6 @@ const PlaceOrder: React.FC = () => {
   const taxPrice = itemsPrice * 0.15; // Example tax rate
   const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
-  // Handle place order functionality
   const placeOrderHandler = async () => {
     if (!shippingAddress || !paymentMethod) {
       // If missing shipping address or payment method, redirect or alert the user
@@ -57,14 +54,10 @@ const PlaceOrder: React.FC = () => {
       })
     );
 
-    // Optionally, clear the cart after order is placed
     dispatch(resetCart());
-
-    // Redirect to order confirmation page
     navigate("/order-confirmation");
   };
 
-  // Load shipping address from localStorage if present
   useEffect(() => {
     if (!shippingAddress) {
       dispatch(
@@ -100,6 +93,7 @@ const PlaceOrder: React.FC = () => {
           ) : (
             <p>No shipping address provided.</p>
           )}
+          <Link to="/shipping">Edit</Link>
         </Card.Body>
       </Card>
 
@@ -108,9 +102,49 @@ const PlaceOrder: React.FC = () => {
         <Card.Header as="h2">Payment Method</Card.Header>
         <Card.Body>
           <p>{paymentMethod || "No payment method selected."}</p>
+          <Link to="/payment">Edit</Link>
         </Card.Body>
       </Card>
 
+      <Card className="mb-4">
+        <Card.Header as="h2">Items</Card.Header>
+        <Card.Body>
+          <ListGroup.Item variant="flush">
+            {cartItems.map((item) => (
+              <ListGroup.Item key={item._id}>
+                <Row className="align-items-center mb-3">
+                  {" "}
+                  <Col md={6} className="d-flex align-items-center">
+                    {" "}
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="img-fluid rounded me-2"
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                    <Link
+                      to={`/product/${item.slug}`}
+                      className="text-decoration-none"
+                    >
+                      {item.name}
+                    </Link>
+                  </Col>
+                  <Col md={3} className="text-center">
+                    {" "}
+                    <span>{item.quantity}</span>
+                  </Col>
+                  <Col md={3} className="text-center">
+                    {" "}
+                    <span>${item.price.toFixed(2)}</span>{" "}
+                    {/* Use toFixed for price formatting */}
+                  </Col>
+                </Row>
+              </ListGroup.Item>
+            ))}
+          </ListGroup.Item>
+          <Link to="/cart">Edit</Link>
+        </Card.Body>
+      </Card>
       {/* Order Summary */}
       <Card className="mb-4">
         <Card.Header as="h2">Order Summary</Card.Header>
