@@ -25,6 +25,27 @@ export const getOrderById = createAsyncThunk(
   }
 );
 
+// export const getPaypalClientIdQuery = createAsyncThunk(
+//   "paypal-clientId",
+//   async () => {
+//     const { data } = await apiClient.get<{ message: string; clientId: string }>(
+//       `/api/keys/paypal`
+//     );
+//     return data.clientId;
+//   }
+// );
+
+// export const payOrder = createAsyncThunk(
+//   "order/payorder",
+//   async (orderId: string) => {
+//     const { data } = await apiClient.post<{ message: string; order: Order }>(
+//       `api/orders/${orderId}/pay`,
+//       orderId
+//     );
+//     return data;
+//   }
+// );
+
 // Initial state
 interface OrderState {
   order: Order | null;
@@ -75,6 +96,17 @@ export const orderSlice = createSlice({
         state.status = "failed";
         state.error = (action.error as APiError) || "Failed to fetch order";
       });
+    // .addCase(payOrder.pending, (state) => {
+    //   state.status = "loading";
+    // })
+    // .addCase(payOrder.fulfilled, (state, action) => {
+    //   state.status = "succeeded";
+    //   state.order = action.payload.order;
+    // })
+    // .addCase(payOrder.rejected, (state, action) => {
+    //   state.status = "failed";
+    //   state.error = (action.error as APiError) || "Failed to put PayOrder";
+    // });
   },
 });
 

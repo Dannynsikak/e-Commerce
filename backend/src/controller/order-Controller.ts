@@ -49,9 +49,29 @@ const orderModels = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const orderModelsPay = async (req: Request, res: Response) => {
+  const order = await OrderModel.findById(req.params.id).populate("user");
+
+  if (order) {
+    order.isPaid = true;
+    order.paidAt = new Date(Date.now());
+    order.paymentResult = {
+      paymentId: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.email_address,
+    };
+    const updateOrder = await order.save();
+
+    res.send({ updateOrder, message: "Order Paid Successfully" });
+  } else {
+    res.status(404).json({ message: "Order Not Found" });
+  }
+};
 const orderModelsController = {
   orderModels,
   orderModelsById,
+  orderModelsPay,
 };
 
 export default orderModelsController;

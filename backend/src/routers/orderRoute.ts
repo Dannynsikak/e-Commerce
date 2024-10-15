@@ -8,6 +8,8 @@ orderRouter.get("/:id", isAuth, orderController.orderModelsById);
 
 orderRouter.post("/", isAuth, orderController.orderModels);
 
+orderRouter.put("/:id/pay", isAuth, orderController.orderModelsPay);
+
 //orderRouter.get("", isAuth, orderController.getAllProduct);
 
 export default orderRouter;

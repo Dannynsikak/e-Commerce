@@ -9,6 +9,8 @@ import paymentReducer from "./slices/paymentSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import orderReducer from "./slices/orderSlice";
+import paypalReducer from "./slices/paypalSlice";
+
 import {
   FLUSH,
   REHYDRATE,
@@ -62,6 +64,7 @@ const rootReducer = combineReducers({
   payment: paymentReducer,
   mode: modeSlice.reducer,
   order: orderReducer,
+  paypal: paypalReducer,
 });
 
 // Create a persisted reducer

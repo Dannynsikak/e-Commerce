@@ -23,6 +23,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import PlaceOrderPage from "./pages/PlaceOrderPage.tsx";
 import OrderPage from "./pages/OrderPage.tsx";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 // axios.defaults.baseURL =
 //   process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
@@ -51,9 +52,11 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <HelmetProvider>
-          <RouterProvider router={router} />
-        </HelmetProvider>
+        <PayPalScriptProvider options={{ clientId: "sb" }} deferLoading={true}>
+          <HelmetProvider>
+            <RouterProvider router={router} />
+          </HelmetProvider>
+        </PayPalScriptProvider>
       </PersistGate>
     </Provider>
   </StrictMode>
