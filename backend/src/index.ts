@@ -8,6 +8,7 @@ import productRouter from "./routers/productRouter";
 import seedRouter from "./routers/seedRouter";
 import { userRouter } from "./routers/userRouter";
 import orderRoute from "./routers/orderRoute";
+import { keyRouter } from "./routers/keyRouter";
 
 dotenv.config();
 const config = process.env;
@@ -79,6 +80,7 @@ app.use("/api/products", productRouter);
 app.use("/api/users", userRouter);
 app.use("/api/orders", orderRoute);
 app.use("/api/seed", seedRouter);
+app.use("/api/keys", keyRouter);
 
 // Start the server
 app.listen(PORT, () => {
