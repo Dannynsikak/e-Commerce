@@ -1,18 +1,16 @@
-import { Button, Card, Col } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { Product } from "../types/Product";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addItemToCart, calculatePrices } from "../slices/CartSlice";
-import { AppDispatch, RootState } from "../store";
+import { AppDispatch } from "../store";
 import { CartItem } from "../types/Cart";
 import { convertProductToCartItem } from "../utils";
 import { toast } from "react-toastify";
-import AdminDashboard from "./Admin";
 
 export default function ProductItem({ product }: { product: Product }) {
   const dispatch: AppDispatch = useDispatch();
-  const { userInfo } = useSelector((state: RootState) => state.user);
 
   const handleAddItem = (item: CartItem) => {
     dispatch(addItemToCart(item));
@@ -20,10 +18,6 @@ export default function ProductItem({ product }: { product: Product }) {
     toast.success("Item added to cart!"); // Toast for success
   };
 
-  const isAdmin =
-    userInfo &&
-    userInfo.length > 0 &&
-    userInfo.some((user) => user.role === "admin");
   return (
     <>
       <Card className="shadow-sm">
@@ -33,7 +27,7 @@ export default function ProductItem({ product }: { product: Product }) {
             src={product.image}
             alt={product.name}
             className="img-fluid"
-            style={{ height: "200px", objectFit: "cover" }} // Maintain image aspect ratio
+            style={{ height: "200px", maxWidth: "100%" }} // Maintain image aspect ratio
           />
         </Link>
         <Card.Body>
@@ -59,14 +53,6 @@ export default function ProductItem({ product }: { product: Product }) {
           )}
         </Card.Body>
       </Card>
-
-      {/* Render the AdminDashboard if the user is an admin */}
-
-      {isAdmin && (
-        <div>
-          <AdminDashboard />
-        </div>
-      )}
     </>
   );
 }
