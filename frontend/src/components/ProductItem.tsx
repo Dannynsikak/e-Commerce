@@ -11,36 +11,48 @@ import { toast } from "react-toastify";
 
 export default function ProductItem({ product }: { product: Product }) {
   const dispatch: AppDispatch = useDispatch();
-  // const cart = useSelector((state: RootState) => state.cart);
 
   const handleAddItem = (item: CartItem) => {
     dispatch(addItemToCart(item));
     dispatch(calculatePrices()); // Recalculate prices after adding item
     toast.success("Item added to cart!"); // Toast for success
   };
+
   return (
-    <Card>
-      <Link to={`/product/${product.slug}`}>
-        <img src={product.image} alt={product.name} className="card-img-top" />
-      </Link>
-      <Card.Body>
+    <>
+      <Card className="shadow-sm">
         <Link to={`/product/${product.slug}`}>
-          <Card.Title>{product.name}</Card.Title>
+          <Card.Img
+            variant="top"
+            src={product.image}
+            alt={product.name}
+            className="img-fluid"
+            style={{ height: "200px", maxWidth: "100%" }} // Maintain image aspect ratio
+          />
         </Link>
-        <Rating rating={product.rating} numReviews={product.numReviews} />
-        <Card.Text>${product.price}</Card.Text>
-        {product.countInStock === 0 ? (
-          <Button variant="light" disabled>
-            Out of stock
-          </Button>
-        ) : (
-          <Button
-            onClick={() => handleAddItem(convertProductToCartItem(product))}
+        <Card.Body>
+          <Link
+            to={`/product/${product.slug}`}
+            className="text-decoration-none"
           >
-            Add to cart
-          </Button>
-        )}
-      </Card.Body>
-    </Card>
+            <Card.Title className="text-primary">{product.name}</Card.Title>
+          </Link>
+          <Rating rating={product.rating} numReviews={product.numReviews} />
+          <Card.Text className="fw-bold">${product.price}</Card.Text>
+          {product.countInStock === 0 ? (
+            <Button variant="light" disabled>
+              Out of stock
+            </Button>
+          ) : (
+            <Button
+              onClick={() => handleAddItem(convertProductToCartItem(product))}
+              variant="success"
+            >
+              Add to cart
+            </Button>
+          )}
+        </Card.Body>
+      </Card>
+    </>
   );
 }
