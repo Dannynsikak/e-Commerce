@@ -25,16 +25,6 @@ export const getOrderById = createAsyncThunk(
   }
 );
 
-// export const getPaypalClientIdQuery = createAsyncThunk(
-//   "paypal-clientId",
-//   async () => {
-//     const { data } = await apiClient.get<{ message: string; clientId: string }>(
-//       `/api/keys/paypal`
-//     );
-//     return data.clientId;
-//   }
-// );
-
 // export const payOrder = createAsyncThunk(
 //   "order/payorder",
 //   async (orderId: string) => {

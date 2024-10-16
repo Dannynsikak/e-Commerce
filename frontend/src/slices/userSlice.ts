@@ -4,6 +4,7 @@ import { resetCart } from "./CartSlice";
 import { AppDispatch } from "../store";
 import apiClient from "../apiClient";
 import { User } from "../types/User"; // Use the defined User type
+import axios from "axios";
 
 // Define the shape of your user state
 interface UserState {
@@ -26,21 +27,39 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   return response.data;
 });
 
-export const deleteUser = createAsyncThunk(
-  "users/deleteUser",
-  async (userId: string) => {
+export const deleteUser = createAsyncThunk<
+  string, // The return type (userId)
+  string, // The argument type (userId)
+  { rejectValue: string } // The error type returned by rejectWithValue
+>("users/deleteUser", async (userId: string, { rejectWithValue }) => {
+  try {
     await apiClient.delete(`/api/users/${userId}`);
-    return userId;
+    return userId; // Return the userId to remove it from the state
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      return rejectWithValue(
+        error.response.data.message || "Failed to delete user"
+      );
+    }
+    return rejectWithValue("An unknown error occurred");
   }
-);
+});
 
-export const addUser = createAsyncThunk(
-  "users/addUser",
-  async (userData: Partial<User>) => {
-    const response = await apiClient.post("/api/users", userData);
-    return response.data;
-  }
-);
+// export const  = createAsyncThunk(
+//   "users/addUser",
+//   async (userData: Partial<User>) => {
+//     const response = await apiClient.post("/api/users/createuser", userData);
+//     return response.data;
+//   }
+// );
+
+export const addUser = createAsyncThunk<
+  User,
+  { name: string; email: string; password: string; role: string }
+>("user/addUser", async (userData) => {
+  const response = await apiClient.post("/api/users/createuser", userData);
+  return response.data;
+});
 
 // Async thunk for user sign-in
 export const signIn = createAsyncThunk<
@@ -75,6 +94,7 @@ const userSlice = createSlice({
   reducers: {
     signOut(state) {
       state.userInfo = null;
+      state.currentUserId = null;
     },
   },
   extraReducers: (builder) => {

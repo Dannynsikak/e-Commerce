@@ -9,3 +9,7 @@ userRouter.post("/signin", userController.userSignIn);
 userRouter.post("/signup", userController.userSignUp);
 
 userRouter.get("/", userController.getUsers);
+
+userRouter.post("/createuser", userController.createUser);
+
+userRouter.delete("/user/:id", userController.deleteUser);

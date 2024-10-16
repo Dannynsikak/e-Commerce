@@ -26,9 +26,15 @@ const AdminDashboard: React.FC = () => {
     const name = form.elements.namedItem("name") as HTMLInputElement;
     const email = form.elements.namedItem("email") as HTMLInputElement;
     const role = form.elements.namedItem("role") as HTMLSelectElement;
+    const password = form.elements.namedItem("role") as HTMLInputElement;
 
     dispatch(
-      addUser({ name: name.value, email: email.value, role: role.value })
+      addUser({
+        name: name.value,
+        email: email.value,
+        role: role.value,
+        password: password.value,
+      })
     );
     form.reset(); // Reset the form after submission
   };
@@ -83,6 +89,15 @@ const AdminDashboard: React.FC = () => {
                 type="email"
                 name="email"
                 placeholder="Enter email"
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="formPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="text"
+                name="password"
+                placeholder="Enter password"
                 required
               />
             </Form.Group>
