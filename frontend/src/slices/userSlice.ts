@@ -3,47 +3,63 @@ import { APiError } from "../types/ApiError";
 import { resetCart } from "./CartSlice";
 import { AppDispatch } from "../store";
 import apiClient from "../apiClient";
+import { User } from "../types/User"; // Use the defined User type
 
 // Define the shape of your user state
-interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-  token: string;
-}
-
 interface UserState {
-  userInfo: UserInfo | null;
+  userInfo: User[] | null; // userInfo is now an array of User or null
+  currentUserId: string | null; // New property to track logged-in user
   loading: boolean;
   error: APiError | null;
 }
 
 const initialState: UserState = {
   userInfo: null,
+  currentUserId: null, // Initialize as null
   loading: false,
   error: null,
 };
 
+// Async thunk to get users
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+  const response = await apiClient.get("/api/users");
+  return response.data;
+});
+
+export const deleteUser = createAsyncThunk(
+  "users/deleteUser",
+  async (userId: string) => {
+    await apiClient.delete(`/api/users/${userId}`);
+    return userId;
+  }
+);
+
+export const addUser = createAsyncThunk(
+  "users/addUser",
+  async (userData: Partial<User>) => {
+    const response = await apiClient.post("/api/users", userData);
+    return response.data;
+  }
+);
+
 // Async thunk for user sign-in
 export const signIn = createAsyncThunk<
-  UserInfo,
+  User,
   { email: string; password: string }
 >("user/signIn", async (userData) => {
-  console.log("Signing in with:", userData);
   const response = await apiClient.post("/api/users/signin", userData);
-  console.log("Received response:", response.data); // Debugging output
-  return response.data; // Expecting the user object with token and role
+  return response.data;
 });
 
 // Async thunk for user sign-up
 export const signUp = createAsyncThunk<
-  UserInfo,
+  User,
   { name: string; email: string; password: string }
 >("user/signUp", async (userData) => {
   const response = await apiClient.post("/api/users/signup", userData);
-  return response.data; // Expecting the user object with token and role
+  return response.data;
 });
+
 export const setUserFromLocalStorage = createAsyncThunk(
   "user/setUserFromLocalStorage",
   async () => {
@@ -59,7 +75,7 @@ const userSlice = createSlice({
   reducers: {
     signOut(state) {
       state.userInfo = null;
-
+      localStorage.removeItem("userInfo");
       window.location.href = "/signin";
     },
   },
@@ -72,14 +88,14 @@ const userSlice = createSlice({
       })
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
-        state.userInfo = action.payload; // Set user info on successful sign-in
-        localStorage.setItem("userInfo", JSON.stringify(action.payload)); // Store user info in localStorage
-        console.log("Saved to localStorage:", localStorage.getItem("userInfo"));
+        state.currentUserId = action.payload._id; // Set the currently logged-in user ID
+        state.userInfo = [action.payload]; // Set user info as an array with a single user
+        localStorage.setItem("userInfo", JSON.stringify([action.payload])); // Store in localStorage as an array
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error as APiError;
-      }) // Casting the error to APIError
+      })
       // Handle sign-up
       .addCase(signUp.pending, (state) => {
         state.loading = true;
@@ -87,15 +103,32 @@ const userSlice = createSlice({
       })
       .addCase(signUp.fulfilled, (state, action) => {
         state.loading = false;
-        state.userInfo = action.payload; // Set user info on successful sign-up
-        localStorage.setItem("userInfo", JSON.stringify(action.payload)); // Store user info in localStorage
+        state.userInfo = [action.payload]; // Set user info as an array with a single user
+        localStorage.setItem("userInfo", JSON.stringify([action.payload])); // Store in localStorage as an array
       })
       .addCase(signUp.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error as APiError;
       })
+      // Handle fetching users
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.userInfo = action.payload;
+      })
+      // Handle deleting a user
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.userInfo =
+          state.userInfo?.filter((user) => user._id !== action.payload) || null;
+      })
+      // Handle adding a user
+      .addCase(addUser.fulfilled, (state, action) => {
+        if (state.userInfo) {
+          state.userInfo.push(action.payload);
+        } else {
+          state.userInfo = [action.payload];
+        }
+      })
       .addCase(setUserFromLocalStorage.fulfilled, (state, action) => {
-        state.userInfo = action.payload; // Set user info from local storage
+        state.userInfo = action.payload;
       });
   },
 });
@@ -105,8 +138,8 @@ export const { signOut } = userSlice.actions;
 export default userSlice.reducer;
 
 export const handleSignOut = () => (dispatch: AppDispatch) => {
-  dispatch(signOut()); // Dispatch the signOut action
-  dispatch(resetCart()); // Clear cart items and related data
-  localStorage.removeItem("userInfo"); // Remove user info from localStorage
-  window.location.href = "/signin"; // Redirect to sign-in page
+  dispatch(signOut());
+  dispatch(resetCart());
+  localStorage.removeItem("userInfo");
+  window.location.href = "/signin";
 };

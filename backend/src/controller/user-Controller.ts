@@ -1,7 +1,32 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { User, UserModel } from "../models/userModel";
 import { generateToken } from "../utils";
 import bcrypt from "bcryptjs";
+
+// const allProducts = async (req: Request, res: Response) => {
+//   try {
+//     const products = await ProductModel.find();
+//     res.json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to fetch products" });
+//   }
+// };
+const getUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await UserModel.find();
+
+    if (!users.length) {
+      res.status(404).json({ message: "No users found" });
+      return;
+    }
+    console.log(users.length);
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const userSignIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -43,6 +68,7 @@ const userSignUp = async (req: Request, res: Response) => {
 const userController = {
   userSignIn,
   userSignUp,
+  getUsers,
 };
 
 export default userController;

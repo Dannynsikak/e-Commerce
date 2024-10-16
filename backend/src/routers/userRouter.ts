@@ -7,3 +7,5 @@ userRouter.post("/signin", userController.userSignIn);
 
 // post /api/users/signup
 userRouter.post("/signup", userController.userSignUp);
+
+userRouter.get("/", userController.getUsers);
