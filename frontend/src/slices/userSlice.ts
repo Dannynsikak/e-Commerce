@@ -75,8 +75,6 @@ const userSlice = createSlice({
   reducers: {
     signOut(state) {
       state.userInfo = null;
-      localStorage.removeItem("userInfo");
-      window.location.href = "/signin";
     },
   },
   extraReducers: (builder) => {

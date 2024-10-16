@@ -24,7 +24,6 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import PlaceOrderPage from "./pages/PlaceOrderPage.tsx";
 import OrderPage from "./pages/OrderPage.tsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import AdminDashboard from "./components/Admin.tsx";
 
 // axios.defaults.baseURL =
 //   process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
@@ -43,7 +42,6 @@ const router = createBrowserRouter(
         <Route path="placeorder" element={<PlaceOrderPage />} />
         <Route path="/order/:id" element={<OrderPage />} />
       </Route>
-      <Route path="/admin" element={<AdminDashboard />} />
       {/* <Route path="dashboard" element={<Dashboard />} /> */}
       {/* ... etc. */}
     </Route>
