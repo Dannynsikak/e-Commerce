@@ -4,21 +4,31 @@ import { ToggleButton } from "./components/ToogleBtn";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch
-import { RootState } from "./store"; // Import RootState
+import { AppDispatch, persistor, RootState } from "./store"; // Import RootState
 import { LinkContainer } from "react-router-bootstrap";
 import { signOut } from "./slices/userSlice";
 import { resetCart } from "./slices/CartSlice";
+import React from "react";
 
 function App() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const cart = useSelector((state: RootState) => state.cart);
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
   // Define a handler for signing out
+  // const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  //   e.preventDefault(); // Prevented default anchor behavior
+  //   dispatch(signOut()); // Dispatch the signOut action
+  //   dispatch(resetCart()); // Clear the cart on sign out
+  // };
+
   const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault(); // Prevented default anchor behavior
-    dispatch(signOut()); // Dispatch the signOut action
-    dispatch(resetCart()); // Clear the cart on sign out
+    e.preventDefault();
+    dispatch(signOut()); // This will clear userInfo in state
+    localStorage.removeItem("userInfo"); // This will clear localStorage
+    dispatch(resetCart()); // Ensure cart is reset if needed
+    persistor.purge();
+    window.location.href = "/signin"; // Redirect to sign-in page
   };
 
   return (
@@ -40,7 +50,7 @@ function App() {
                 )}
               </Link>
               {userInfo ? (
-                <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                <NavDropdown title={userInfo[0].name} id="basic-nav-dropdown">
                   <Link
                     to="#signout"
                     className="dropdown-item"
