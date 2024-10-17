@@ -21,4 +21,5 @@ productRouter.get(
   })
 );
 
+productRouter.post("/addproducts", allProductsController.addProduct);
 export default productRouter;

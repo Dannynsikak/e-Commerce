@@ -1,9 +1,18 @@
 import Spinner from "react-bootstrap/Spinner";
 
-export default function LoadingBox() {
+interface LoadingBoxProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const LoadingBox: React.FC<LoadingBoxProps> = ({ children }) => {
   return (
     <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading.....</span>
+      <span className="visually-hidden">
+        {children || "Loading"}Loading.....
+      </span>
     </Spinner>
   );
-}
+};
+
+export default LoadingBox;

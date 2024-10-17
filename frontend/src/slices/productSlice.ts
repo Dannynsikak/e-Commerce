@@ -35,6 +35,23 @@ export const fetchProductDetailsBySlug = createAsyncThunk<
   }
 });
 
+// Thunk for adding a new product
+export const addProducts = createAsyncThunk<
+  Product,
+  Product,
+  { rejectValue: string }
+>("products/add", async (newProduct, { rejectWithValue }) => {
+  try {
+    const { data } = await apiClient.post(
+      "/api/products/addproducts",
+      newProduct
+    );
+    return data;
+  } catch (err) {
+    return rejectWithValue(getError(err as APiError));
+  }
+});
+
 const initialState: ProductState = {
   products: [],
   productDetails: null,
@@ -45,7 +62,12 @@ const initialState: ProductState = {
 export const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    addProducts: (state, action) => {
+      // Assuming action.payload contains the new product
+      state.products.push(action.payload); // Add new product to the state
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Handle fetching all products
@@ -76,6 +98,20 @@ export const productSlice = createSlice({
       .addCase(fetchProductDetailsBySlug.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch product details.";
+      });
+
+    builder
+      .addCase(addProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addProducts.fulfilled, (state, action) => {
+        state.products.push(action.payload); // Add the new product to the list
+        state.loading = false;
+      })
+      .addCase(addProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to add product.";
       });
   },
 });
