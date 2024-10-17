@@ -14,6 +14,7 @@ import MessageBox from "../components/MessageBox";
 import ProductItem from "../components/ProductItem";
 import { Helmet } from "react-helmet-async";
 import AdminDashboard from "../components/Admin"; // Ensure you import AdminDashboard
+import AddProductForm from "../components/AddProducts";
 
 export default function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +28,10 @@ export default function HomePage() {
     userInfo.length > 0 &&
     userInfo.some((user) => user.role === "admin");
 
+  const isSeller =
+    userInfo &&
+    userInfo.length > 0 &&
+    userInfo.some((user) => user.role === "seller");
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -53,6 +58,8 @@ export default function HomePage() {
 
       {/* Render the AdminDashboard if the user is an admin */}
       {isAdmin && <AdminDashboard />}
+
+      {isSeller && <AddProductForm />}
     </>
   );
 }
