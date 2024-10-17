@@ -26,13 +26,12 @@ const PlaceOrder: React.FC = () => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-  const shippingPrice = itemsPrice > 100 ? 0 : 10; // Example shipping logic
-  const taxPrice = itemsPrice * 0.15; // Example tax rate
+  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const taxPrice = itemsPrice * 0.15;
   const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
   const placeOrderHandler = async () => {
     if (!shippingAddress || !paymentMethod) {
-      // If missing shipping address or payment method, redirect or alert the user
       toast.error("Please complete the shipping and payment details.");
       return;
     }

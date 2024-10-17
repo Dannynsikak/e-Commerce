@@ -126,6 +126,7 @@ const userSlice = createSlice({
       })
       .addCase(signUp.fulfilled, (state, action) => {
         state.loading = false;
+        state.currentUserId = action.payload._id;
         state.userInfo = [action.payload]; // Set user info as an array with a single user
         localStorage.setItem("userInfo", JSON.stringify([action.payload])); // Store in localStorage as an array
       })
