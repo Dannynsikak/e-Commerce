@@ -1,12 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
 import { fetchUsers, deleteUser, addUser } from "../slices/userSlice";
-import { Button, ListGroup, Row, Col, Form } from "react-bootstrap";
+import { Button, ListGroup, Row, Col, Form, Alert } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const AdminDashboard: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { userInfo } = useSelector((state: RootState) => state.user);
+  const { userInfo, error } = useSelector((state: RootState) => state.user);
+
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [role, setRole] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -14,36 +20,39 @@ const AdminDashboard: React.FC = () => {
     };
 
     fetchUserData();
-  }, [dispatch]); // Ensure no unnecessary re-renders occur
+  }, [dispatch]);
 
   const handleDeleteUser = (userId: string) => {
     dispatch(deleteUser(userId));
   };
 
-  const handleAddUser = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    const name = form.elements.namedItem("name") as HTMLInputElement;
-    const email = form.elements.namedItem("email") as HTMLInputElement;
-    const role = form.elements.namedItem("role") as HTMLSelectElement;
-    const password = form.elements.namedItem("role") as HTMLInputElement;
 
-    dispatch(
-      addUser({
-        name: name.value,
-        email: email.value,
-        role: role.value,
-        password: password.value,
-      })
-    );
-    form.reset(); // Reset the form after submission
+    // Form validation: Ensure all fields are filled
+    if (!name || !email || !password || !role) {
+      toast.error("All fields are required!");
+      return;
+    }
+
+    // Dispatch the addUser action
+    await dispatch(addUser({ name, email, password, role }));
+
+    // Clear the form fields after submission
+    setName("");
+    setEmail("");
+    setPassword("");
+    setRole("");
+
+    toast.success("User added successfully!");
   };
 
   return (
     <>
       <h1 className="text-center mb-4">Admin Dashboard</h1>
       <h2 className="mb-3">Manage Users</h2>
-
+      {error && <Alert variant="danger">{error.message}</Alert>}{" "}
+      {/* Display error message */}
       <Row>
         <Col md={6}>
           <ListGroup>
@@ -77,8 +86,9 @@ const AdminDashboard: React.FC = () => {
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
-                name="name"
                 placeholder="Enter name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </Form.Group>
@@ -87,24 +97,32 @@ const AdminDashboard: React.FC = () => {
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
-                name="email"
                 placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Form.Group>
+
             <Form.Group controlId="formPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
-                type="text"
-                name="password"
+                type="password"
                 placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </Form.Group>
 
             <Form.Group controlId="formRole">
               <Form.Label>Role</Form.Label>
-              <Form.Control as="select" name="role" required>
+              <Form.Control
+                as="select"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+              >
                 <option value="">Select role</option>
                 <option value="admin">Admin</option>
                 <option value="seller">Seller</option>

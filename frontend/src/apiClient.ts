@@ -7,12 +7,16 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+// Add a request interceptor to attach the token
 apiClient.interceptors.request.use(
-  async (config) => {
-    if (localStorage.getItem("userInfo"))
-      config.headers.Authorization = `Bearer ${
-        JSON.parse(localStorage.getItem("userInfo")!).token
-      }`;
+  (config) => {
+    const token = localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo") || "{}")[0]?.token // the token is stored inside the userInfo array
+      : null;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

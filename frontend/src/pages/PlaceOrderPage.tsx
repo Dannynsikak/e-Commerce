@@ -3,9 +3,9 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store";
 import { Link, useNavigate } from "react-router-dom";
-import { setShippingAddress } from "../slices/shippingSlice"; // Assuming you have the action set
-import { createOrder } from "../slices/orderSlice"; // Assuming you have an order creation action
-import { resetCart } from "../slices/CartSlice"; // Assuming you want to clear cart after placing order
+import { setShippingAddress } from "../slices/shippingSlice";
+import { createOrder } from "../slices/orderSlice";
+import { resetCart } from "../slices/CartSlice";
 import { Card, ListGroup, Button, Row, Col } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
@@ -18,7 +18,9 @@ const PlaceOrder: React.FC = () => {
   const { shippingAddress } = useSelector((state: RootState) => state.shipping);
   const { cartItems } = useSelector((state: RootState) => state.cart);
   const { paymentMethod } = useSelector((state: RootState) => state.payment);
-  const { userInfo } = useSelector((state: RootState) => state.user);
+  const { userInfo, currentUserId } = useSelector(
+    (state: RootState) => state.user
+  );
 
   const itemsPrice = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -34,8 +36,9 @@ const PlaceOrder: React.FC = () => {
       toast.error("Please complete the shipping and payment details.");
       return;
     }
-    if (!userInfo || !userInfo._id) {
-      // If user is not logged in or userInfo is undefined, alert the user
+    const currentUser = userInfo?.find((user) => user._id === currentUserId);
+
+    if (!currentUser || !currentUser._id) {
       toast.error("User not logged in.");
       return;
     }
@@ -43,7 +46,7 @@ const PlaceOrder: React.FC = () => {
     // Dispatch action to create the order
     dispatch(
       createOrder({
-        user: userInfo._id,
+        user: currentUser._id,
         orderItems: cartItems,
         shippingAddress,
         paymentMethod,
@@ -55,7 +58,7 @@ const PlaceOrder: React.FC = () => {
     );
 
     dispatch(resetCart());
-    navigate(`/order/${userInfo._id}`);
+    navigate(`/order/${currentUser._id}`);
   };
 
   useEffect(() => {

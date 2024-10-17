@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { AppDispatch, RootState } from "../store";
 import { removeItemFromCart, updateItemQuantity } from "../slices/CartSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Col, ListGroup, Row } from "react-bootstrap";
@@ -9,7 +9,7 @@ import { Helmet } from "react-helmet-async";
 
 export default function CartPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Select cart items from the Redux store
   const { cartItems } = useSelector((state: RootState) => state.cart);
@@ -39,7 +39,7 @@ export default function CartPage() {
   };
 
   // Determine button styles based on mode
-  const buttonStyle = mode === "dark" ? "btn-light" : "btn-dark"; // Change classes as per your styling
+  const buttonStyle = mode === "dark" ? "btn-light" : "btn-dark";
 
   return (
     <div className="cart-page">
