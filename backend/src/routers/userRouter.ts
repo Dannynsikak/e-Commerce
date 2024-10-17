@@ -1,5 +1,6 @@
 import express from "express";
 import userController from "../controller/user-Controller";
+import { isAuth } from "../utils";
 
 export const userRouter = express.Router();
 // POST /api/users/signin
@@ -10,6 +11,6 @@ userRouter.post("/signup", userController.userSignUp);
 
 userRouter.get("/", userController.getUsers);
 
-userRouter.post("/createuser", userController.createUser);
+userRouter.post("/createuser", isAuth, userController.createUser);
 
-userRouter.delete("/user/:id", userController.deleteUser);
+userRouter.delete("/:id", isAuth, userController.deleteUser);

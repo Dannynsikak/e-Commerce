@@ -34,13 +34,16 @@ export const deleteUser = createAsyncThunk<
 >("users/deleteUser", async (userId: string, { rejectWithValue }) => {
   try {
     await apiClient.delete(`/api/users/${userId}`);
+    console.log("Deleting user with ID:", userId);
     return userId; // Return the userId to remove it from the state
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
+      console.log("Error deleting user:", error.response?.data);
       return rejectWithValue(
         error.response.data.message || "Failed to delete user"
       );
     }
+    console.log("An unknown error occurred:", error);
     return rejectWithValue("An unknown error occurred");
   }
 });
@@ -67,6 +70,7 @@ export const signIn = createAsyncThunk<
   { email: string; password: string }
 >("user/signIn", async (userData) => {
   const response = await apiClient.post("/api/users/signin", userData);
+  localStorage.setItem("userInfo", JSON.stringify(response.data));
   return response.data;
 });
 
@@ -76,6 +80,7 @@ export const signUp = createAsyncThunk<
   { name: string; email: string; password: string }
 >("user/signUp", async (userData) => {
   const response = await apiClient.post("/api/users/signup", userData);
+  localStorage.setItem("userInfo", JSON.stringify(response.data));
   return response.data;
 });
 
@@ -106,9 +111,9 @@ const userSlice = createSlice({
       })
       .addCase(signIn.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentUserId = action.payload._id; // Set the currently logged-in user ID
-        state.userInfo = [action.payload]; // Set user info as an array with a single user
-        localStorage.setItem("userInfo", JSON.stringify([action.payload])); // Store in localStorage as an array
+        state.currentUserId = action.payload._id;
+        state.userInfo = [action.payload];
+        localStorage.setItem("userInfo", JSON.stringify([action.payload]));
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;

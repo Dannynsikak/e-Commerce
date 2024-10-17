@@ -3,14 +3,6 @@ import { User, UserModel } from "../models/userModel";
 import { generateToken } from "../utils";
 import bcrypt from "bcryptjs";
 
-// const allProducts = async (req: Request, res: Response) => {
-//   try {
-//     const products = await ProductModel.find();
-//     res.json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: "Failed to fetch products" });
-//   }
-// };
 const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await UserModel.find();
@@ -19,11 +11,8 @@ const getUsers = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "No users found" });
       return;
     }
-    console.log(users.length);
-
     res.json(users);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -81,7 +70,7 @@ const createUser = async (req: Request, res: Response) => {
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
-        token: generateToken(newUser),
+        generateToken,
       },
     });
   } catch (error) {
@@ -91,7 +80,7 @@ const createUser = async (req: Request, res: Response) => {
 };
 
 // New function to delete a user
-const deleteUser = async (req: Request, res: Response): Promise<void> => {
+const deleteUser = async (req: Request, res: Response) => {
   const userId = req.params.id; // Get the user ID from the URL parameters
 
   try {

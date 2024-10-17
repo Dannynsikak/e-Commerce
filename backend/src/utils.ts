@@ -28,7 +28,7 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (authorization) {
-    const token = authorization.slice(7); // Remove "Bearer " prefix
+    const token = authorization.split(" ")[1]; // Remove "Bearer " prefix
     try {
       // Verify token using JWT_SECRET
       const decoded = jwt.verify(
@@ -44,10 +44,10 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
         token: string;
       };
 
-      next(); // Continue if token is valid
+      next();
     } catch (error) {
       if (error instanceof Error) {
-        console.error("Invalid Token Error:", error.message); // Log the error message
+        // Log the error message
         res.status(401).json({ message: "Invalid Token" });
       } else {
         console.error("Unexpected Error", error);
