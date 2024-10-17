@@ -14,8 +14,8 @@ export default function ProductItem({ product }: { product: Product }) {
 
   const handleAddItem = (item: CartItem) => {
     dispatch(addItemToCart(item));
-    dispatch(calculatePrices()); // Recalculate prices after adding item
-    toast.success("Item added to cart!"); // Toast for success
+    dispatch(calculatePrices());
+    toast.success("Item added to cart!");
   };
 
   return (
@@ -27,7 +27,7 @@ export default function ProductItem({ product }: { product: Product }) {
             src={product.image}
             alt={product.name}
             className="img-fluid"
-            style={{ height: "200px", maxWidth: "100%" }} // Maintain image aspect ratio
+            style={{ height: "200px", maxWidth: "100%" }}
           />
         </Link>
         <Card.Body>

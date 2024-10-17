@@ -6,6 +6,7 @@ import { AppDispatch } from "../store";
 import MessageBox from "./MessageBox";
 import LoadingBox from "./LoadingBox";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddProductForm = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -41,6 +42,7 @@ const AddProductForm = () => {
     };
 
     dispatch(addProducts(newProduct));
+    toast.success("user added successfully");
     navigate("/");
   };
 

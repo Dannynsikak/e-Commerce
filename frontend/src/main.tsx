@@ -11,7 +11,6 @@ import App from "./App.tsx";
 import "./index.css";
 import HomePage from "./pages/HomPage.tsx";
 import ProductPage from "./pages/ProductPage.tsx";
-// import axios from "axios";
 import { persistor, store } from "./store.ts";
 import { Provider } from "react-redux";
 import CartPage from "./pages/CartPage.tsx";
@@ -25,10 +24,6 @@ import PlaceOrderPage from "./pages/PlaceOrderPage.tsx";
 import OrderPage from "./pages/OrderPage.tsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import PayPal from "./pages/PayPal.tsx";
-import AddProductForm from "./components/AddProducts.tsx";
-
-// axios.defaults.baseURL =
-//   process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,9 +40,6 @@ const router = createBrowserRouter(
         <Route path="paypalpayment" element={<PayPal orderId={""} />} />
         <Route path="/order/:id" element={<OrderPage />} />
       </Route>
-      <Route path="addproducts" element={<AddProductForm />} />
-      {/* <Route path="dashboard" element={<Dashboard />} /> */}
-      {/* ... etc. */}
     </Route>
   )
 );
