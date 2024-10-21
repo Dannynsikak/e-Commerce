@@ -26,13 +26,6 @@ seedRouter.get(
     } catch (error) {
       res.status(500).send({ message: "Failed to seed data", error });
     }
-    // try {
-    //   await UserModel.deleteMany({});
-
-    //   res.send({ createdUsers });
-    // } catch (error) {
-    //   res.status(500).send({ message: "Failed to seed Users" });
-    // }
   })
 );
 

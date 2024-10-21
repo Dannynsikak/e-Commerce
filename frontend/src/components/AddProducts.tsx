@@ -6,6 +6,8 @@ import { AppDispatch } from "../store";
 import MessageBox from "./MessageBox";
 import LoadingBox from "./LoadingBox";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 const AddProductForm = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -41,11 +43,15 @@ const AddProductForm = () => {
     };
 
     dispatch(addProducts(newProduct));
+    toast.success("user added successfully");
     navigate("/");
   };
 
   return (
     <div className="container mt-4">
+      <Helmet>
+        <title>Add Product</title>
+      </Helmet>
       <h2 className="text-center">Add Product</h2>
       <form onSubmit={handleAddProduct}>
         <div className="mb-3">
