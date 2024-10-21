@@ -3,8 +3,8 @@ import { Link, Outlet } from "react-router-dom";
 import { ToggleButton } from "./components/ToogleBtn";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { useSelector, useDispatch } from "react-redux"; // Import useSelector and useDispatch
-import { AppDispatch, persistor, RootState } from "./store"; // Import RootState
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, persistor, RootState } from "./store";
 import { LinkContainer } from "react-router-bootstrap";
 import { signOut } from "./slices/userSlice";
 import { resetCart } from "./slices/CartSlice";
@@ -15,20 +15,13 @@ function App() {
   const cart = useSelector((state: RootState) => state.cart);
   const userInfo = useSelector((state: RootState) => state.user.userInfo);
 
-  // Define a handler for signing out
-  // const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
-  //   e.preventDefault(); // Prevented default anchor behavior
-  //   dispatch(signOut()); // Dispatch the signOut action
-  //   dispatch(resetCart()); // Clear the cart on sign out
-  // };
-
   const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     dispatch(signOut()); // This will clear userInfo in state
     localStorage.removeItem("userInfo"); // This will clear localStorage
     dispatch(resetCart()); // Ensure cart is reset if needed
     persistor.purge();
-    window.location.href = "/signin"; // Redirect to sign-in page
+    window.location.href = "/signin";
   };
 
   return (
@@ -54,7 +47,7 @@ function App() {
                   <Link
                     to="#signout"
                     className="dropdown-item"
-                    onClick={handleSignOut} // Use the handler here
+                    onClick={handleSignOut}
                   >
                     Sign Out
                   </Link>

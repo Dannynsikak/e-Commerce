@@ -1,4 +1,3 @@
-// src/components/HomePage.tsx
 import { Col, Row } from "react-bootstrap";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,8 +12,8 @@ import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import ProductItem from "../components/ProductItem";
 import { Helmet } from "react-helmet-async";
-import AdminDashboard from "../components/Admin"; // Ensure you import AdminDashboard
-import AddProductForm from "../components/AddProducts";
+import AdminDashboard from "../components/Admin";
+import BtnAddProducts from "../components/BtnAddProducts";
 
 export default function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,7 +40,6 @@ export default function HomePage() {
       <Helmet>
         <title>eCommerce-App</title>
       </Helmet>
-
       {loading ? (
         <LoadingBox />
       ) : error ? (
@@ -50,16 +48,14 @@ export default function HomePage() {
         <Row>
           {products!.map((product) => (
             <Col key={product.slug} sm={6} md={4} lg={3}>
-              <ProductItem product={product} /> {/* Pass productId */}
+              <ProductItem product={product} />
             </Col>
           ))}
         </Row>
       )}
-
       {/* Render the AdminDashboard if the user is an admin */}
       {isAdmin && <AdminDashboard />}
-
-      {isSeller && <AddProductForm />}
+      {isSeller && <BtnAddProducts />}
     </>
   );
 }
