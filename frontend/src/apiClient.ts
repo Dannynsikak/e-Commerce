@@ -7,7 +7,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
-// Add a request interceptor to attach the token
+
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("userInfo")

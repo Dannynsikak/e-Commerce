@@ -77,8 +77,33 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// Controller to delete a product by ID
+const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    // Find the product by ID
+    const product = await ProductModel.findById(id);
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    // Delete the product
+    await ProductModel.findByIdAndDelete(id);
+
+    // Respond with a success message
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Failed to delete product" });
+  }
+};
+
 const allProductsController = {
   allProducts,
   addProduct,
+  deleteProduct,
 };
 export default allProductsController;

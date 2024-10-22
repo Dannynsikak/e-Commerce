@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import apiClient from "../apiClient"; // Assuming apiClient is set up to handle API requests
 import { Order } from "../types/order"; // Import the Order type
 import { APiError } from "../types/ApiError";
+
 // Async thunk for creating an order
 export const createOrder = createAsyncThunk(
   "order/createOrder",
@@ -25,26 +26,25 @@ export const getOrderById = createAsyncThunk(
   }
 );
 
-// export const payOrder = createAsyncThunk(
-//   "order/payorder",
-//   async (orderId: string) => {
-//     const { data } = await apiClient.post<{ message: string; order: Order }>(
-//       `api/orders/${orderId}/pay`,
-//       orderId
-//     );
-//     return data;
-//   }
-// );
+// Async thunk for getting all orders
+export const getAllOrders = createAsyncThunk("order/getAllOrders", async () => {
+  const { data } = await apiClient.get<{ message: string; orders: Order[] }>(
+    "api/orders"
+  );
+  return data.orders;
+});
 
-// Initial state
+// Initial state interface
 interface OrderState {
   order: Order | null;
+  orders: Order[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: APiError | null;
 }
 
 const initialState: OrderState = {
   order: null,
+  orders: [],
   status: "idle",
   error: null,
 };
@@ -55,6 +55,7 @@ export const orderSlice = createSlice({
   reducers: {
     resetOrder: (state) => {
       state.order = null;
+      state.orders = [];
       state.status = "idle";
       state.error = null;
     },
@@ -85,18 +86,21 @@ export const orderSlice = createSlice({
       .addCase(getOrderById.rejected, (state, action) => {
         state.status = "failed";
         state.error = (action.error as APiError) || "Failed to fetch order";
+      })
+      .addCase(getAllOrders.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getAllOrders.fulfilled,
+        (state, action: PayloadAction<Order[]>) => {
+          state.status = "succeeded";
+          state.orders = action.payload;
+        }
+      )
+      .addCase(getAllOrders.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = (action.error as APiError) || "Failed to fetch orders";
       });
-    // .addCase(payOrder.pending, (state) => {
-    //   state.status = "loading";
-    // })
-    // .addCase(payOrder.fulfilled, (state, action) => {
-    //   state.status = "succeeded";
-    //   state.order = action.payload.order;
-    // })
-    // .addCase(payOrder.rejected, (state, action) => {
-    //   state.status = "failed";
-    //   state.error = (action.error as APiError) || "Failed to put PayOrder";
-    // });
   },
 });
 

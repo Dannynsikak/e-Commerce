@@ -1,4 +1,4 @@
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -6,6 +6,7 @@ import {
   selectLoading,
   selectError,
   selectProducts,
+  deleteProduct,
 } from "../slices/productSlice";
 import { AppDispatch, RootState } from "../store";
 import LoadingBox from "../components/LoadingBox";
@@ -35,6 +36,12 @@ export default function HomePage() {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  // Function to handle the delete action
+  const handleDelete = (productId: string) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      dispatch(deleteProduct(productId));
+    }
+  };
   return (
     <>
       <Helmet>
@@ -49,6 +56,16 @@ export default function HomePage() {
           {products!.map((product) => (
             <Col key={product.slug} sm={6} md={4} lg={3}>
               <ProductItem product={product} />
+              {/* Render delete button for admins and sellers */}
+              {(isAdmin || isSeller) && product._id && (
+                <Button
+                  variant="danger"
+                  className="mt-2"
+                  onClick={() => handleDelete(product._id!)} // Call the delete handler with the product ID
+                >
+                  Delete
+                </Button>
+              )}
             </Col>
           ))}
         </Row>
