@@ -2,6 +2,20 @@ import { Request, Response } from "express";
 import { OrderModel } from "../models/orderModels";
 import { Product } from "../models/ProductModel";
 
+// Get all orders
+const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await OrderModel.find().populate("user", "name email"); // populate user details
+    res.status(200).json(orders);
+  } catch (error) {
+    const err = error as Error;
+    console.error("Error fetching orders:", err.message);
+    res
+      .status(500)
+      .json({ message: "Error fetching orders", error: err.message });
+  }
+};
+
 // get orders by id
 const orderModelsById = async (req: Request, res: Response) => {
   const order = await OrderModel.findById(req.params.id);
@@ -69,6 +83,7 @@ const orderModelsPay = async (req: Request, res: Response) => {
   }
 };
 const orderModelsController = {
+  getAllOrders,
   orderModels,
   orderModelsById,
   orderModelsPay,

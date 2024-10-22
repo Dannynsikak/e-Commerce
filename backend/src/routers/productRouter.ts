@@ -22,4 +22,5 @@ productRouter.get(
 );
 
 productRouter.post("/addproducts", allProductsController.addProduct);
+productRouter.delete("/:id", allProductsController.deleteProduct);
 export default productRouter;

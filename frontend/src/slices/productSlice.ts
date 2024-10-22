@@ -52,6 +52,20 @@ export const addProducts = createAsyncThunk<
   }
 });
 
+// Delete a product by ID
+export const deleteProduct = createAsyncThunk<
+  string, // The payload will just be the product ID
+  string,
+  { rejectValue: string }
+>("products/delete", async (id, { rejectWithValue }) => {
+  try {
+    await apiClient.delete(`/api/products/${id}`);
+    return id; // Return the product ID to remove it from the state
+  } catch (err) {
+    return rejectWithValue(getError(err as APiError));
+  }
+});
+
 const initialState: ProductState = {
   products: [],
   productDetails: null,
@@ -112,6 +126,24 @@ export const productSlice = createSlice({
       .addCase(addProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to add product.";
+      });
+
+    // Handle deleting a product
+    builder
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        // Remove the deleted product by filtering out the matching product ID
+        state.products = state.products.filter(
+          (product) => product._id !== action.payload
+        );
+        state.loading = false;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to delete product.";
       });
   },
 });
