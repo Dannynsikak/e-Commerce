@@ -1,7 +1,11 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import apiClient from "../apiClient"; // Assuming apiClient is set up to handle API requests
-import { Order } from "../types/order"; // Import the Order type
-import { APiError } from "../types/ApiError";
+import type { Order } from "../types/order"; // Import the Order type
+import type { APiError } from "../types/ApiError";
 
 // Async thunk for creating an order
 export const createOrder = createAsyncThunk(

@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { APiError } from "../types/ApiError";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { APiError } from "../types/ApiError";
 
 export type PaymentMethod = "PayPal" | "CreditCard";
 

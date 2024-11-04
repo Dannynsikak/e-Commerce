@@ -1,8 +1,8 @@
 // src/slices/productSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Product, ProductState } from "../types/Product";
-import { RootState } from "../store";
-import { APiError } from "../types/ApiError";
+import type { Product, ProductState } from "../types/Product";
+import type { RootState } from "../store";
+import type { APiError } from "../types/ApiError";
 import { getError } from "../utils";
 import apiClient from "../apiClient";
 
@@ -128,7 +128,6 @@ export const productSlice = createSlice({
         state.error = action.payload || "Failed to add product.";
       });
 
-    // Handle deleting a product
     builder
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;

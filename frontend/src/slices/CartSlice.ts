@@ -1,14 +1,16 @@
 // src/slices/CartSlice.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Cart, CartItem, ShippingAddress } from "../types/Cart";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { Cart, CartItem, ShippingAddress } from "../types/Cart";
 
 // Initial state follows the Cart type
 const initialState: Cart = {
   cartItems: localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems")!)
+    ? // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      JSON.parse(localStorage.getItem("cartItems")!)
     : [],
   shippingAddress: localStorage.getItem("shippingAddress")
-    ? JSON.parse(localStorage.getItem("shippingAddress")!)
+    ? // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      JSON.parse(localStorage.getItem("shippingAddress")!)
     : {
         fullName: "",
         address: "",
@@ -17,7 +19,8 @@ const initialState: Cart = {
         postalCode: "",
       },
   paymentMethod: localStorage.getItem("paymentMethod")
-    ? localStorage.getItem("paymentMethod")!
+    ? // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      localStorage.getItem("paymentMethod")!
     : "PayPal",
   itemsPrice: 0,
   shippingPrice: 0,

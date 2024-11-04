@@ -31,8 +31,7 @@ const modeSlice = createSlice({
   initialState: {
     mode:
       (localStorage.getItem("mode") as "light" | "dark") ||
-      (window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
+      (window.matchMedia?.("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light"),
   } as ModeState,
@@ -76,7 +75,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER], 
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
 });

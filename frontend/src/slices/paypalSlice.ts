@@ -1,14 +1,18 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import apiClient from "../apiClient"; // Assuming apiClient is set up to handle API requests
-import { APiError } from "../types/ApiError";
-import { Order } from "../types/order";
+import type { APiError } from "../types/ApiError";
+import type { Order } from "../types/order";
 
 // Async thunk for getting PayPal Client ID
 export const getPaypalClientId = createAsyncThunk(
   "paypal/getClientId",
   async () => {
     const { data } = await apiClient.get<{ message: string; clientId: string }>(
-      `/api/keys/paypal`
+      "/api/keys/paypal"
     );
     return data.clientId;
   }
