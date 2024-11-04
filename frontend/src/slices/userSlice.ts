@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { APiError } from "../types/ApiError";
+import type { APiError } from "../types/ApiError";
 import { resetCart } from "./CartSlice";
-import { AppDispatch } from "../store";
+import type { AppDispatch } from "../store";
 import apiClient from "../apiClient";
-import { User } from "../types/User"; // Use the defined User type
+import type { User } from "../types/User"; // Use the defined User type
 import axios from "axios";
 
 // Define the shape of your user state
